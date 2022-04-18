@@ -4,6 +4,5 @@ go {{.GoVersion}}
 
 require (
 	github.com/99designs/gqlgen v0.17.2
-  github.com/neakor/cloud-functions-gql/foundations v0.1.0
-	github.com/vektah/gqlparser/v2 v2.4.0
+  github.com/funcgql/foundations v0.1.0
 )
