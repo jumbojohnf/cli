@@ -1,0 +1,8 @@
+{
+  "rootPath": "GQL_ROOT_PATH",
+  "aws": {
+    "lambda": {
+      "roleName": "LAMBDA_ROLE_NAME"
+    }
+  }
+}
