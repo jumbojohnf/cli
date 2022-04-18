@@ -1,0 +1,7 @@
+go {{.GoVersion}}
+
+use (
+{{- range $moduleDirName := .ModuleDirNames}}
+  ./{{$moduleDirName}}
+{{- end}}
+)
