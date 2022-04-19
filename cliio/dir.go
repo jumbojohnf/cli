@@ -6,15 +6,17 @@ import (
 	"os"
 )
 
-type Dir struct {
-	absPath string
+type Dir interface {
+	AbsPath() string
+	Make() error
+	Exists() (bool, error)
 }
 
-func DirOf(absPath string) *Dir {
-	return &Dir{absPath: absPath}
+func DirOf(absPath string) Dir {
+	return &dir{absPath: absPath}
 }
 
-func TempDir(name string) (*Dir, error) {
+func TempDir(name string) (Dir, error) {
 	// ioutil.TempDir will replace the `*` with a random string.
 	dirName := fmt.Sprintf("*-%s", name)
 	absPath, err := ioutil.TempDir("", dirName)
@@ -22,18 +24,18 @@ func TempDir(name string) (*Dir, error) {
 		return nil, err
 	}
 
-	return &Dir{absPath: absPath}, nil
+	return &dir{absPath: absPath}, nil
 }
 
-func (d *Dir) AbsPath() string {
+func (d *dir) AbsPath() string {
 	return d.absPath
 }
 
-func (d *Dir) Make() error {
+func (d *dir) Make() error {
 	return os.MkdirAll(d.AbsPath(), os.ModePerm)
 }
 
-func (d *Dir) Exists() (bool, error) {
+func (d *dir) Exists() (bool, error) {
 	info, err := os.Stat(d.AbsPath())
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -42,4 +44,8 @@ func (d *Dir) Exists() (bool, error) {
 		return false, err
 	}
 	return info.IsDir(), nil
+}
+
+type dir struct {
+	absPath string
 }
