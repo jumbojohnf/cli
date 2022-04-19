@@ -24,9 +24,9 @@ var initCmd = &cobra.Command{
 			return errors.Errorf("missing AWS configuration %s", config.ConfigFilename)
 		}
 
-		fmt.Println("🌳 Setting up AWS development environment in", cfg.RootAbsPath)
+		fmt.Println("🌳 Setting up AWS development environment in", cfg.GraphModulesAbsPath)
 
-		if err := tools.InstallAllIn(cfg.RootAbsPath); err != nil {
+		if err := tools.InstallAllIn(cfg.GraphModulesAbsPath); err != nil {
 			return errors.Wrap(err, "failed to install go tools")
 		}
 

@@ -22,14 +22,14 @@ var newCmd = &cobra.Command{
 
 		moduleName := args[0]
 		fmt.Println("🐭 Creating go module", moduleName)
-		newModule, err := module.New(moduleName, cfg.RootAbsPath)
+		newModule, err := module.New(moduleName, cfg.GraphModulesAbsPath)
 		if err != nil {
 			errors.Wrapf(err, "failed to create new go module %s", moduleName)
 		}
 
 		fmt.Println("🚧 Generating subgraph initial code", moduleName)
 		if err := gqlgen.NewAPI().Init(newModule.AbsPath(), moduleName); err != nil {
-			return errors.Wrapf(err, "failed to run gqlgen init in %s", cfg.RootAbsPath)
+			return errors.Wrapf(err, "failed to run gqlgen init in %s", cfg.GraphModulesAbsPath)
 		}
 
 		// Run tidy last after all the generated code is in place.

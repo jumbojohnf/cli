@@ -14,9 +14,9 @@ import (
 const ConfigFilename = "funcgql.json"
 
 type Config struct {
-	RootPath    string `json:"rootPath"`
-	RootAbsPath string
-	AWS         *AWSConfig `json:"aws,omitempty"`
+	GraphModulesRelPath string `json:"graphModulesRelPath"`
+	GraphModulesAbsPath string
+	AWS                 *AWSConfig `json:"aws,omitempty"`
 }
 
 func LoadFromRepoRoot() (*Config, error) {
@@ -28,8 +28,8 @@ func LoadFromRepoRoot() (*Config, error) {
 	return LoadFrom(repoRoot.Path)
 }
 
-func LoadFrom(rootPath string) (*Config, error) {
-	configFilePath, err := configFilePathIn(rootPath)
+func LoadFrom(dir string) (*Config, error) {
+	configFilePath, err := configFilePathIn(dir)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to find configuration file")
 	}
@@ -45,13 +45,13 @@ func LoadFrom(rootPath string) (*Config, error) {
 	if err := json.Unmarshal(configContent, &result); err != nil {
 		return nil, errors.Wrapf(err, "failed to unmarshal configuration file at %s", configFilePath)
 	}
-	result.RootAbsPath = filepath.Join(rootPath, result.RootPath)
+	result.GraphModulesAbsPath = filepath.Join(dir, result.GraphModulesRelPath)
 	return &result, nil
 }
 
-func configFilePathIn(rootPath string) (string, error) {
+func configFilePathIn(dir string) (string, error) {
 	var configFilePath string
-	if err := filepath.WalkDir(rootPath, func(path string, d fs.DirEntry, err error) error {
+	if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}

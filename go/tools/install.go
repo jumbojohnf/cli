@@ -12,8 +12,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-func InstallAllIn(rootPath string) error {
-	tools, err := goToolsIn(rootPath)
+func InstallAllIn(dir string) error {
+	tools, err := goToolsIn(dir)
 	if err != nil {
 		return err
 	}
@@ -34,8 +34,8 @@ type goTools struct {
 	toolNames  []string
 }
 
-func goToolsIn(rootPath string) ([]goTools, error) {
-	toolsFilePaths, err := goToolsFilePathsIn(rootPath)
+func goToolsIn(dir string) ([]goTools, error) {
+	toolsFilePaths, err := goToolsFilePathsIn(dir)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to find all tools.go files")
 	}
@@ -55,9 +55,9 @@ func goToolsIn(rootPath string) ([]goTools, error) {
 	return results, nil
 }
 
-func goToolsFilePathsIn(rootPath string) ([]string, error) {
+func goToolsFilePathsIn(dir string) ([]string, error) {
 	var results []string
-	if err := filepath.WalkDir(rootPath, func(path string, d fs.DirEntry, err error) error {
+	if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
