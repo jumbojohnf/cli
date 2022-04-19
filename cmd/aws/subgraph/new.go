@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/funcgql/cli/config"
+	"github.com/funcgql/cli/functype"
 	"github.com/funcgql/cli/go/module"
 	"github.com/funcgql/cli/gqlgen"
 	"github.com/pkg/errors"
@@ -28,7 +29,12 @@ var newCmd = &cobra.Command{
 		}
 
 		fmt.Println("🚧 Generating subgraph initial code", moduleName)
-		if err := gqlgen.NewAPI().Init(newModule.AbsPath(), moduleName); err != nil {
+		functionTypeArg := args[1]
+		functionType, validFunctionType := functype.Of(functionTypeArg)
+		if !validFunctionType {
+			return errors.Errorf("invalid function type %s", functionTypeArg)
+		}
+		if err := gqlgen.NewAPI().Init(newModule.AbsPath(), moduleName, functionType); err != nil {
 			return errors.Wrapf(err, "failed to run gqlgen init in %s", cfg.GraphModulesAbsPath)
 		}
 

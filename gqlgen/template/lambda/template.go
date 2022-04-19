@@ -1,4 +1,4 @@
-package template
+package lambda
 
 import (
 	_ "embed"
@@ -23,8 +23,11 @@ func (t mainTemplate) Export(rootDir string) error {
 		return err
 	}
 
-	const filename = "main.go"
-	if _, err := template.Export(content, filepath.Join(rootDir, filename)); err != nil {
+	const (
+		filename = "main.go"
+		dirName  = "lambda"
+	)
+	if _, err := template.Export(content, filepath.Join(rootDir, dirName, filename)); err != nil {
 		return err
 	}
 	return nil
