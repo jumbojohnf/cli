@@ -6,28 +6,30 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/funcgql/cli/cliio"
 	"github.com/funcgql/cli/go/version"
 	"github.com/funcgql/cli/template"
 	"github.com/pkg/errors"
 )
 
 type GoWorkTemplate interface {
-	Export(rootDir string) (*cliio.File, error)
+	Export(rootDir string) error
 }
 
 func New() GoWorkTemplate {
 	return goWorkTemplate{}
 }
 
-func (t goWorkTemplate) Export(rootDir string) (*cliio.File, error) {
+func (t goWorkTemplate) Export(rootDir string) error {
 	content, err := t.render(rootDir)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	const filename = "go.work"
-	return template.Export(content, filepath.Join(rootDir, filename))
+	if _, err := template.Export(content, filepath.Join(rootDir, filename)); err != nil {
+		return err
+	}
+	return nil
 }
 
 //go:embed go.work.template

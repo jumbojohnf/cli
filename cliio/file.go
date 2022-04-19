@@ -8,28 +8,33 @@ import (
 	"github.com/pkg/errors"
 )
 
-type File struct {
-	absPath string
+type File interface {
+	AbsPath() string
+	StringContent() (string, error)
+	Write(content string) error
+	WriteBytes(bytes []byte) error
+	Make() error
+	Exists() (bool, error)
 }
 
-func FileOf(absPath string) *File {
-	return &File{absPath: absPath}
+func FileOf(absPath string) File {
+	return &file{absPath: absPath}
 }
 
-func TempFile(name string) (*File, error) {
+func TempFile(name string) (File, error) {
 	iofile, err := ioutil.TempFile("", name)
 	if err != nil {
 		return nil, err
 	}
 
-	return &File{absPath: iofile.Name()}, nil
+	return &file{absPath: iofile.Name()}, nil
 }
 
-func (f *File) AbsPath() string {
+func (f *file) AbsPath() string {
 	return f.absPath
 }
 
-func (f *File) StringContent() (string, error) {
+func (f *file) StringContent() (string, error) {
 	bytes, err := ioutil.ReadFile(f.absPath)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to read content of %s", f.AbsPath())
@@ -38,11 +43,11 @@ func (f *File) StringContent() (string, error) {
 	return string(bytes), nil
 }
 
-func (f *File) Write(content string) error {
+func (f *file) Write(content string) error {
 	return f.WriteBytes([]byte(content))
 }
 
-func (f *File) WriteBytes(bytes []byte) error {
+func (f *file) WriteBytes(bytes []byte) error {
 	iofile, err := f.make()
 	if err != nil {
 		return err
@@ -56,12 +61,12 @@ func (f *File) WriteBytes(bytes []byte) error {
 	return iofile.Sync()
 }
 
-func (f *File) Make() error {
+func (f *file) Make() error {
 	_, err := f.make()
 	return err
 }
 
-func (f *File) Exists() (bool, error) {
+func (f *file) Exists() (bool, error) {
 	info, err := os.Stat(f.AbsPath())
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -73,7 +78,11 @@ func (f *File) Exists() (bool, error) {
 	return !info.IsDir(), nil
 }
 
-func (f *File) make() (*os.File, error) {
+type file struct {
+	absPath string
+}
+
+func (f *file) make() (*os.File, error) {
 	// Create parent directory if needed.
 	if err := DirOf(filepath.Dir(f.AbsPath())).Make(); err != nil {
 		return nil, err

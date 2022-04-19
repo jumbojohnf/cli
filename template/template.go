@@ -26,7 +26,7 @@ func Render(templateName string, templateContent string, data interface{}) (stri
 	return outputBuffer.String(), nil
 }
 
-func Export(content string, filePath string) (*cliio.File, error) {
+func Export(content string, filePath string) (cliio.File, error) {
 	dstFile := cliio.FileOf(filePath)
 	if err := dstFile.Make(); err != nil {
 		return nil, err

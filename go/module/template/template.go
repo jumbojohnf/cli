@@ -4,13 +4,12 @@ import (
 	_ "embed"
 	"path/filepath"
 
-	"github.com/funcgql/cli/cliio"
 	"github.com/funcgql/cli/go/version"
 	"github.com/funcgql/cli/template"
 )
 
 type GoModTemplate interface {
-	Export(rootDir string) (*cliio.File, error)
+	Export(rootDir string) error
 }
 
 func New(moduleName string) GoModTemplate {
@@ -19,14 +18,17 @@ func New(moduleName string) GoModTemplate {
 	}
 }
 
-func (t goModTemplate) Export(dirAbsPath string) (*cliio.File, error) {
+func (t goModTemplate) Export(dirAbsPath string) error {
 	content, err := t.render()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	const filename = "go.mod"
-	return template.Export(content, filepath.Join(dirAbsPath, filename))
+	if _, err := template.Export(content, filepath.Join(dirAbsPath, filename)); err != nil {
+		return err
+	}
+	return nil
 }
 
 //go:embed go.mod.template

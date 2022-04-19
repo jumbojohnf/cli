@@ -4,12 +4,11 @@ import (
 	_ "embed"
 	"path/filepath"
 
-	"github.com/funcgql/cli/cliio"
 	"github.com/funcgql/cli/template"
 )
 
 type GoToolsTemplate interface {
-	Export(rootDir string) (*cliio.File, error)
+	Export(rootDir string) error
 }
 
 func New(moduleDirName string) GoToolsTemplate {
@@ -18,14 +17,17 @@ func New(moduleDirName string) GoToolsTemplate {
 	}
 }
 
-func (t goToolsTemplate) Export(dirAbsPath string) (*cliio.File, error) {
+func (t goToolsTemplate) Export(dirAbsPath string) error {
 	content, err := t.render()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	const filename = "tools.go"
-	return template.Export(content, filepath.Join(dirAbsPath, filename))
+	if _, err := template.Export(content, filepath.Join(dirAbsPath, filename)); err != nil {
+		return err
+	}
+	return nil
 }
 
 //go:embed tools.go.template

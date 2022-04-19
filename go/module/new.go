@@ -20,18 +20,18 @@ func New(name string, rootAbsPath string) (Module, error) {
 	}
 
 	toolsGoTemplate := toolstemplate.New(dirName)
-	if _, err := toolsGoTemplate.Export(absPath); err != nil {
+	if err := toolsGoTemplate.Export(absPath); err != nil {
 		return nil, errors.Wrap(err, "failed to create new module tools.go file")
 	}
 
 	modTemplate := modtemplate.New(name)
-	if _, err := modTemplate.Export(absPath); err != nil {
+	if err := modTemplate.Export(absPath); err != nil {
 		return nil, errors.Wrap(err, "failed to create new go.mod file")
 	}
 
 	// Export go.work file after module is created since it needs to include the newly created module.
 	goWorkTemplate := worktemplate.New()
-	if _, err := goWorkTemplate.Export(rootAbsPath); err != nil {
+	if err := goWorkTemplate.Export(rootAbsPath); err != nil {
 		return nil, errors.Wrapf(err, "failed to update go.work file in %s", rootAbsPath)
 	}
 
