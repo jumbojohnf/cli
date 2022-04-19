@@ -21,14 +21,14 @@ var newCmd = &cobra.Command{
 		}
 
 		moduleName := args[0]
-		fmt.Println("Creating go module", moduleName)
-		_, err = module.New(moduleName, cfg.RootAbsPath)
+		fmt.Println("🐭 Creating go module", moduleName)
+		newModule, err := module.New(moduleName, cfg.RootAbsPath)
 		if err != nil {
 			errors.Wrapf(err, "failed to create new go module %s", moduleName)
 		}
 
-		fmt.Println("Generating subgraph initial code", moduleName)
-		if err := gqlgen.NewAPI().Init(); err != nil {
+		fmt.Println("🚧 Generating subgraph initial code", moduleName)
+		if err := gqlgen.NewAPI().Init(newModule.AbsPath()); err != nil {
 			return errors.Wrapf(err, "failed to run gqlgen init in %s", cfg.RootAbsPath)
 		}
 		// TODO: Remove server.go

@@ -2,7 +2,7 @@ package tools
 
 import "github.com/funcgql/cli/shell"
 
-func Run(moduleName string, args ...string) (shell.Output, error) {
+func RunIn(moduleName string, absPath string, args ...string) (shell.Output, error) {
 	goArgs := append([]string{"run", moduleName}, args...)
-	return shell.Execute("go", goArgs...)
+	return shell.ExecuteIn(absPath, "go", goArgs...)
 }
