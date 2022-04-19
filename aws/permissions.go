@@ -12,7 +12,7 @@ import (
 //go:embed lambda-trust-policy.json
 var trustPolicyData []byte
 
-func (a *API) CreateLambdaRole() error {
+func (a *api) CreateLambdaRole() error {
 	fmt.Println("👮‍♀️ Creating lambda execution role")
 
 	policyFile, err := cliio.TempFile("policy")

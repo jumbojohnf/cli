@@ -7,12 +7,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-type API struct {
-	binaryPath string
-	cfg        config.AWSConfig
+type API interface {
+	CreateLambdaRole() error
+
+	execute(args ...string) (shell.Output, error)
 }
 
-func NewAPI() (*API, error) {
+func NewAPI() (API, error) {
 	cfg, err := config.LoadFromRepoRoot()
 	if err != nil {
 		return nil, err
@@ -21,12 +22,17 @@ func NewAPI() (*API, error) {
 	}
 
 	const binaryPath = "aws"
-	return &API{
+	return &api{
 		binaryPath: binaryPath,
 		cfg:        *cfg.AWS,
 	}, nil
 }
 
-func (r *API) execute(args ...string) (shell.Output, error) {
-	return shell.Execute(r.binaryPath, args...)
+type api struct {
+	binaryPath string
+	cfg        config.AWSConfig
+}
+
+func (a *api) execute(args ...string) (shell.Output, error) {
+	return shell.Execute(a.binaryPath, args...)
 }
