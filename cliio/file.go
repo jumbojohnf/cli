@@ -15,6 +15,7 @@ type File interface {
 	WriteBytes(bytes []byte) error
 	Make() error
 	Exists() (bool, error)
+	Remove() error
 }
 
 func FileOf(absPath string) File {
@@ -76,6 +77,10 @@ func (f *file) Exists() (bool, error) {
 	}
 
 	return !info.IsDir(), nil
+}
+
+func (f *file) Remove() error {
+	return os.RemoveAll(f.absPath)
 }
 
 type file struct {

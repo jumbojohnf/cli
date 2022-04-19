@@ -28,16 +28,15 @@ var newCmd = &cobra.Command{
 		}
 
 		fmt.Println("🚧 Generating subgraph initial code", moduleName)
-		if err := gqlgen.NewAPI().Init(newModule.AbsPath()); err != nil {
+		if err := gqlgen.NewAPI().Init(newModule.AbsPath(), moduleName); err != nil {
 			return errors.Wrapf(err, "failed to run gqlgen init in %s", cfg.RootAbsPath)
 		}
-		// TODO: Remove server.go
-		// TODO: Generate main.go
 
 		// Run tidy last after all the generated code is in place.
-		// if err := targetModule.Tidy(); err != nil {
-		// 	return errors.Wrapf(err, "failed to tidy %s", targetModule.Name())
-		// }
+		fmt.Println("🧹 Tidying", moduleName)
+		if err := newModule.Tidy(); err != nil {
+			return errors.Wrapf(err, "failed to tidy %s", newModule.Name())
+		}
 		return nil
 	},
 }
