@@ -1,4 +1,4 @@
-package work
+package template
 
 import (
 	_ "embed"
@@ -12,25 +12,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-//go:embed go.work.template
-var goWorkTemplateContent string
+type GoWorkTemplate interface {
+	Export(rootDir string) (*cliio.File, error)
+}
 
-func NewTemplate() template.Template {
+func New() GoWorkTemplate {
 	return goWorkTemplate{}
 }
 
-type goWorkTemplate struct{}
-
-func (t goWorkTemplate) Render(rootDir string) (string, error) {
-	data, err := t.contentData(rootDir)
-	if err != nil {
-		return "", err
-	}
-	return template.Render("gowork", goWorkTemplateContent, data)
-}
-
 func (t goWorkTemplate) Export(rootDir string) (*cliio.File, error) {
-	content, err := t.Render(rootDir)
+	content, err := t.render(rootDir)
 	if err != nil {
 		return nil, err
 	}
@@ -38,6 +29,11 @@ func (t goWorkTemplate) Export(rootDir string) (*cliio.File, error) {
 	const filename = "go.work"
 	return template.Export(content, filepath.Join(rootDir, filename))
 }
+
+//go:embed go.work.template
+var goWorkTemplateContent string
+
+type goWorkTemplate struct{}
 
 func (t goWorkTemplate) contentData(rootDir string) (interface{}, error) {
 	type templateData struct {
@@ -94,4 +90,12 @@ func (t goWorkTemplate) topLevelModuleDirNames(rootPath string) ([]string, error
 		return results[i] < results[j]
 	})
 	return results, nil
+}
+
+func (t goWorkTemplate) render(rootDir string) (string, error) {
+	data, err := t.contentData(rootDir)
+	if err != nil {
+		return "", err
+	}
+	return template.Render("gowork", goWorkTemplateContent, data)
 }

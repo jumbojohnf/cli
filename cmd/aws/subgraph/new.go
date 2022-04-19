@@ -1,13 +1,11 @@
 package subgraph
 
 import (
-	"path/filepath"
+	"fmt"
 
-	"github.com/funcgql/cli/cliio"
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/go/module"
-	"github.com/funcgql/cli/go/tools"
-	"github.com/funcgql/cli/go/work"
+	"github.com/funcgql/cli/gqlgen"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -23,34 +21,23 @@ var newCmd = &cobra.Command{
 		}
 
 		moduleName := args[0]
-		moduleAbsPath := filepath.Join(cfg.RootAbsPath, module.DirNameFromModuleName(moduleName))
-		targetModule := module.WithNameAndAbsPath(moduleName, moduleAbsPath)
-		newModuleDir := cliio.DirOf(targetModule.AbsPath())
-		if err := newModuleDir.Make(); err != nil {
-			return errors.Wrapf(err, "failed to create new module directory %s", newModuleDir.AbsPath())
+		fmt.Println("Creating go module", moduleName)
+		_, err = module.New(moduleName, cfg.RootAbsPath)
+		if err != nil {
+			errors.Wrapf(err, "failed to create new go module %s", moduleName)
 		}
 
-		toolsGoTemplate := tools.NewTemplate(targetModule.Name())
-		if _, err := toolsGoTemplate.Export(cfg.RootAbsPath); err != nil {
-			return errors.Wrap(err, "failed to create new module tools.go file")
+		fmt.Println("Generating subgraph initial code", moduleName)
+		if err := gqlgen.NewAPI().Init(); err != nil {
+			return errors.Wrapf(err, "failed to run gqlgen init in %s", cfg.RootAbsPath)
 		}
-
-		if _, err := targetModule.Export(cfg.RootAbsPath); err != nil {
-			return errors.Wrap(err, "failed to create new go.mod file")
-		}
-
-		// Export go.work file last since it needs to include the newly created module.
-		goWorkTemplate := work.NewTemplate()
-		if _, err := goWorkTemplate.Export(cfg.RootAbsPath); err != nil {
-			return errors.Wrapf(err, "failed to create new module go.work file in %s", cfg.RootAbsPath)
-		}
-
-		if err := targetModule.Tidy(); err != nil {
-			return errors.Wrapf(err, "failed to tidy %s", targetModule.Name())
-		}
-		// TODO: Run gqlgen init
 		// TODO: Remove server.go
 		// TODO: Generate main.go
+
+		// Run tidy last after all the generated code is in place.
+		// if err := targetModule.Tidy(); err != nil {
+		// 	return errors.Wrapf(err, "failed to tidy %s", targetModule.Name())
+		// }
 		return nil
 	},
 }

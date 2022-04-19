@@ -1,4 +1,4 @@
-package work
+package template
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ func Test_topLevelModuleDirNames(t *testing.T) {
 }
 
 func Test_Export(t *testing.T) {
-	content, err := NewTemplate().Render("fixtures")
+	content, err := goWorkTemplate{}.render("fixtures")
 	require.NoError(t, err)
 	fmt.Println(content)
 	require.Contains(t, content, "go ")
