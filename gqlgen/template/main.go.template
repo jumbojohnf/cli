@@ -1,0 +1,29 @@
+package main
+
+import (
+	"os"
+
+	"github.com/funcgql/foundations/server"
+	"{{.ModuleName}}/graph"
+	"{{.ModuleName}}/graph/generated"
+)
+
+func main() {
+	newServer().Start()
+}
+
+func newServer() server.Server {
+	schema := generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}})
+
+	if isLocal() {
+		return server.NewLocalServer(schema)
+	}
+	return server.NewLambdaServer(schema)
+}
+
+func isLocal() bool {
+	if len(os.Args) > 1 {
+		return os.Args[1] == "local"
+	}
+	return false
+}
