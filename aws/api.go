@@ -7,12 +7,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-type AWS struct {
+type API struct {
 	binaryPath string
 	cfg        config.AWSConfig
 }
 
-func NewAPI() (*AWS, error) {
+func NewAPI() (*API, error) {
 	cfg, err := config.LoadFromRepoRoot()
 	if err != nil {
 		return nil, err
@@ -21,12 +21,12 @@ func NewAPI() (*AWS, error) {
 	}
 
 	const binaryPath = "aws"
-	return &AWS{
+	return &API{
 		binaryPath: binaryPath,
 		cfg:        *cfg.AWS,
 	}, nil
 }
 
-func (r *AWS) execute(args ...string) (shell.Output, error) {
+func (r *API) execute(args ...string) (shell.Output, error) {
 	return shell.Execute(r.binaryPath, args...)
 }
