@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/funcgql/cli/cmd/aws"
+	"github.com/funcgql/cli/cmd/subgraph"
 	"github.com/spf13/cobra"
 )
 
@@ -22,4 +23,5 @@ func Execute() {
 
 func init() {
 	rootCmd.AddCommand(aws.AWSCmd)
+	rootCmd.AddCommand(subgraph.SubgraphCmd)
 }

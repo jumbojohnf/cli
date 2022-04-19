@@ -1,13 +1,13 @@
 package subgraph
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/functype"
 	"github.com/funcgql/cli/go/module"
 	"github.com/funcgql/cli/gqlgen"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +16,11 @@ var newCmd = &cobra.Command{
 	Short: "Create a new subgraph function go module",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		functionTypes := parseFunctionTypes()
+		if len(functionTypes) <= 0 {
+			return errors.New("at least one cloud function type flag must be specified")
+		}
+
 		cfg, err := config.LoadFromRepoRoot()
 		if err != nil {
 			return err
@@ -29,10 +34,6 @@ var newCmd = &cobra.Command{
 		}
 
 		fmt.Println("🚧 Generating subgraph initial code", moduleName)
-		functionTypes := parseFunctionTypes()
-		if len(functionTypes) <= 0 {
-			return errors.New("at least one cloud function type flag must be specified")
-		}
 		if err := gqlgen.NewAPI().Init(newModule.AbsPath(), moduleName, functionTypes); err != nil {
 			return errors.Wrapf(err, "failed to run gqlgen init in %s", cfg.GraphModulesAbsPath)
 		}
