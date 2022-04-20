@@ -34,14 +34,21 @@ var newCmd = &cobra.Command{
 		}
 
 		fmt.Println("🚧 Generating subgraph initial code", moduleName)
-		if err := gqlgen.NewAPI().Init(newModule.AbsPath(), moduleName, functionTypes); err != nil {
-			return errors.Wrapf(err, "failed to run gqlgen init in %s", cfg.GraphModulesAbsPath)
+		gqlgenAPI := gqlgen.NewAPI()
+		if err := gqlgenAPI.Init(newModule.AbsPath(), newModule, functionTypes); err != nil {
+			return errors.Wrapf(err, "failed to run initialize GQL in %s", newModule.AbsPath())
 		}
 
 		// Run tidy last after all the generated code is in place.
 		fmt.Println("🧹 Tidying", moduleName)
 		if err := newModule.Tidy(); err != nil {
 			return errors.Wrapf(err, "failed to tidy %s", newModule.Name())
+		}
+
+		// Run generate again to update to templated schema after module has been updated.
+		fmt.Println("🏗  Updating subgraph initial code", moduleName)
+		if err := gqlgenAPI.Generate(newModule.AbsPath()); err != nil {
+			return errors.Wrapf(err, "failed to update generated GQL code in %s", newModule.AbsPath())
 		}
 		return nil
 	},

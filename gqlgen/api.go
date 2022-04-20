@@ -1,15 +1,17 @@
 package gqlgen
 
-import "github.com/funcgql/cli/functype"
+import (
+	"github.com/funcgql/cli/functype"
+	"github.com/funcgql/cli/go/module"
+)
 
 type API interface {
-	Init(absPath string, moduleName string, functionTypes []functype.FunctionType) error
+	Init(absPath string, targetModule module.Module, functionTypes []functype.FunctionType) error
+	Generate(absPath string) error
 }
 
 func NewAPI() API {
 	return &api{}
 }
-
-const gqlgenModuleName = "github.com/99designs/gqlgen"
 
 type api struct{}

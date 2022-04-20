@@ -1,0 +1,9 @@
+# Below is generated template schema. Please replace with actual schema for the module.
+
+type {{.ModuleTypeName}} {
+  id: ID!
+}
+
+type Query {
+  {{.QueryFunctionName}}(id: String!): {{.ModuleTypeName}}
+}
