@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-	schema := generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}})
-  server.NewLambdaServer(schema).Start()
+  schema := generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}})
+	server.NewLocalServer(schema).Start()
 }

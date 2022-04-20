@@ -1,4 +1,4 @@
-package lambda
+package local
 
 import (
 	_ "embed"
@@ -17,7 +17,7 @@ func New(moduleName string) MainTemplate {
 }
 
 func (t mainTemplate) Export(rootDir string) error {
-	const dirName = "lambda"
+	const dirName = "local"
 	return t.mainTemplate.Export(rootDir, dirName)
 }
 

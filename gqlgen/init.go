@@ -7,6 +7,7 @@ import (
 	"github.com/funcgql/cli/functype"
 	"github.com/funcgql/cli/go/module"
 	lambdatemplate "github.com/funcgql/cli/gqlgen/template/lambda"
+	localtemplate "github.com/funcgql/cli/gqlgen/template/local"
 	schematemplate "github.com/funcgql/cli/gqlgen/template/schema"
 	"github.com/pkg/errors"
 )
@@ -40,11 +41,17 @@ func (a *api) replaceMain(absPath string, targetModule module.Module, functionTy
 		case functype.Lambda:
 			mainTemplate := lambdatemplate.New(targetModule.Name())
 			if err := mainTemplate.Export(absPath); err != nil {
-				return errors.Wrap(err, "failed to generate main.go")
+				return errors.Wrap(err, "failed to generate lambda server main.go")
 			}
 		default:
 			return errors.Errorf("unknown function type %s to generate main.go", functionType)
 		}
+	}
+
+	// Regardless of function type, always generate local main.go.
+	localMainTemplate := localtemplate.New(targetModule.Name())
+	if err := localMainTemplate.Export(absPath); err != nil {
+		return errors.Wrap(err, "failed to generate local server main.go")
 	}
 
 	return nil
