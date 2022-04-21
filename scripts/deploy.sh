@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+source "$SCRIPT_DIR/test.sh"
+
 LOCAL_DST="/usr/local/bin/funcgql"
 
 function deploy_local
@@ -14,6 +16,8 @@ function deploy_local
 
 function deploy
 {
+  test_all
+
   flag=""
   if [ $# -gt 0 ]; then
     flag=$1
