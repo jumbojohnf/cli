@@ -25,28 +25,34 @@ func LoadFromRepoRoot() (*Config, error) {
 		return nil, errors.Wrap(err, "failed to determine Git repository path")
 	}
 
-	return LoadFrom(repoRoot.Path)
+	result, hasConfig, err := LoadFrom(repoRoot.Path)
+	if err != nil {
+		return nil, err
+	} else if !hasConfig {
+		return nil, errors.Errorf("cannot locate %s config file in %s", ConfigFilename, repoRoot.Path)
+	}
+	return result, nil
 }
 
-func LoadFrom(dir string) (*Config, error) {
+func LoadFrom(dir string) (*Config, bool, error) {
 	configFilePath, err := configFilePathIn(dir)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to find configuration file")
+		return nil, false, errors.Wrap(err, "failed to find configuration file")
 	}
 	if len(configFilePath) <= 0 {
-		return nil, nil
+		return nil, false, nil
 	}
 
 	configContent, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to read configuration file at %s", configFilePath)
+		return nil, false, errors.Wrapf(err, "failed to read configuration file at %s", configFilePath)
 	}
 	var result Config
 	if err := yaml.Unmarshal(configContent, &result); err != nil {
-		return nil, errors.Wrapf(err, "failed to unmarshal configuration file at %s", configFilePath)
+		return nil, false, errors.Wrapf(err, "failed to unmarshal configuration file at %s", configFilePath)
 	}
 	result.GraphModulesAbsPath = filepath.Join(dir, result.GraphModulesRelPath)
-	return &result, nil
+	return &result, true, nil
 }
 
 func configFilePathIn(dir string) (string, error) {
