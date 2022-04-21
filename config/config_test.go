@@ -8,9 +8,10 @@ import (
 )
 
 func Test_LoadIn_aws_lambda(t *testing.T) {
-	result, err := config.LoadFrom("fixtures/aws_lambda")
+	result, exists, err := config.LoadFrom("fixtures/aws_lambda")
 
 	require.NoError(t, err)
+	require.True(t, exists)
 	require.Equal(t, &config.Config{
 		GraphModulesRelPath: "GQL_ROOT_PATH",
 		GraphModulesAbsPath: "fixtures/aws_lambda/GQL_ROOT_PATH",
@@ -23,9 +24,10 @@ func Test_LoadIn_aws_lambda(t *testing.T) {
 }
 
 func Test_LoadIn_base(t *testing.T) {
-	result, err := config.LoadFrom("fixtures/base")
+	result, exists, err := config.LoadFrom("fixtures/base")
 
 	require.NoError(t, err)
+	require.True(t, exists)
 	require.Equal(t, &config.Config{
 		GraphModulesRelPath: "GQL_ROOT_PATH",
 		GraphModulesAbsPath: "fixtures/base/GQL_ROOT_PATH",
