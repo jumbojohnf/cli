@@ -1,7 +1,6 @@
 package config
 
 import (
-	"encoding/json"
 	"io/fs"
 	"io/ioutil"
 	"path/filepath"
@@ -9,14 +8,15 @@ import (
 
 	"github.com/funcgql/cli/repopath"
 	"github.com/pkg/errors"
+	"gopkg.in/yaml.v3"
 )
 
-const ConfigFilename = "funcgql.json"
+const ConfigFilename = "funcgql.yaml"
 
 type Config struct {
-	GraphModulesRelPath string `json:"graphModulesRelPath"`
+	GraphModulesRelPath string `yaml:"graphModulesRelPath"`
 	GraphModulesAbsPath string
-	AWS                 *AWSConfig `json:"aws,omitempty"`
+	AWS                 *AWSConfig `yaml:"aws,omitempty"`
 }
 
 func LoadFromRepoRoot() (*Config, error) {
@@ -42,7 +42,7 @@ func LoadFrom(dir string) (*Config, error) {
 		return nil, errors.Wrapf(err, "failed to read configuration file at %s", configFilePath)
 	}
 	var result Config
-	if err := json.Unmarshal(configContent, &result); err != nil {
+	if err := yaml.Unmarshal(configContent, &result); err != nil {
 		return nil, errors.Wrapf(err, "failed to unmarshal configuration file at %s", configFilePath)
 	}
 	result.GraphModulesAbsPath = filepath.Join(dir, result.GraphModulesRelPath)

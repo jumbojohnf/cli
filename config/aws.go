@@ -1,9 +1,9 @@
 package config
 
 type AWSConfig struct {
-	Lambda LambdaConfig `json:"lambda"`
+	Lambda *LambdaConfig `yaml:"lambda,omitempty"`
 }
 
 type LambdaConfig struct {
-	RoleName string `json:"roleName"`
+	RoleName string `yaml:"roleName"`
 }

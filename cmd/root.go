@@ -11,7 +11,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "funcgql",
 	Short: "A CLI for writing a federated GQL application on serverless cloud providers",
-	Long:  "The CLI can be configured via a funcgql.json file within the Git repository",
+	Long:  "The CLI can be configured via a funcgql.yaml file within the Git repository",
 }
 
 func Execute() {
