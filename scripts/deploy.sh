@@ -2,28 +2,28 @@
 
 set -euo pipefail
 
+LOCAL_DST="/usr/local/bin/funcgql"
+
 function deploy_local
 {
-  rm -rf "/usr/local/bin/funcgql"
-  cd "$SCRIPT_DIR" && go build .
-  mv "$SCRIPT_DIR/cli" "/usr/local/bin/funcgql"
-  chmod +x "/usr/local/bin/funcgql"
+  rm -rf "$LOCAL_DST"
+  cd "$MAKE_DIR" && go build .
+  mv "$MAKE_DIR/cli" "$LOCAL_DST"
+  chmod +x "$LOCAL_DST"
 }
 
 function deploy
 {
-  if [ $# -lt 1 ]; then
-    echo "🛑 Missing deploy target"
-    exit 1
+  flag=""
+  if [ $# -gt 0 ]; then
+    flag=$1
+    shift
   fi
 
-  cmd=$1
-  shift
+  deploy_local $@
+  echo "✅ Deployed local "$LOCAL_DST""
 
-  if [ $cmd == "local" ]; then
-    deploy_local $@
-    echo "✅ Deployed local funcgql"
-  else
-    echo "🤨 Unknown deploy target $cmd"
+  if [[ $flag == "--local" ]]; then
+    return
   fi
 }
