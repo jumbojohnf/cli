@@ -32,6 +32,9 @@ var newCmd = &cobra.Command{
 		if err != nil {
 			errors.Wrapf(err, "failed to create new go module %s", moduleName)
 		}
+		if err := newModule.InstallTools(); err != nil {
+			return err
+		}
 
 		fmt.Println("🚧 Generating subgraph initial code", moduleName)
 		gqlgenAPI := gqlgen.NewAPI()
