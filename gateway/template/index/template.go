@@ -1,6 +1,3 @@
 package index
 
-const (
-	Filename       = "index.ts"
-	GatewayDirName = "gateway"
-)
+const Filename = "index.ts"

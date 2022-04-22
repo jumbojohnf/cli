@@ -11,7 +11,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Export(rootDir string, cfg *config.LambdaGatewayConfig) error {
+func Export(gatewayDir string, cfg *config.LambdaGatewayConfig) error {
 	if cfg == nil {
 		return errors.New("missing lambda gateway configuration to export lambda index file")
 	}
@@ -21,7 +21,7 @@ func Export(rootDir string, cfg *config.LambdaGatewayConfig) error {
 		return errors.Wrap(err, "failed to render lambda gateway index.ts")
 	}
 
-	dstPath := filepath.Join(rootDir, index.GatewayDirName, string(functype.Lambda), index.Filename)
+	dstPath := filepath.Join(gatewayDir, string(functype.Lambda), index.Filename)
 	if _, err := template.Export(content, dstPath); err != nil {
 		return err
 	}
