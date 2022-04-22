@@ -16,6 +16,11 @@ func Test_LoadIn_aws_lambda(t *testing.T) {
 		GraphModulesRelPath: "GQL_ROOT_PATH",
 		GraphModulesAbsPath: "fixtures/aws_lambda/GQL_ROOT_PATH",
 		AWS: &config.AWSConfig{
+			Gateway: &config.LambdaGatewayConfig{
+				SupergraphSDLBucket:         "SUPERGRAPH_SDL_BUCKET",
+				SupergraphSDLKey:            "SUPERGRAPH_SDL_KEY",
+				SupergraphSDLUpdateInterval: 1234,
+			},
 			Lambda: &config.LambdaConfig{
 				RoleName: "LAMBDA_ROLE_NAME",
 			},

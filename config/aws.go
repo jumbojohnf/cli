@@ -1,8 +1,8 @@
 package config
 
 type AWSConfig struct {
-	Lambda  *LambdaConfig        `yaml:"lambda,omitempty"`
 	Gateway *LambdaGatewayConfig `yaml:"gateway,omitempty"`
+	Lambda  *LambdaConfig        `yaml:"lambda,omitempty"`
 }
 
 type LambdaConfig struct {
@@ -10,7 +10,7 @@ type LambdaConfig struct {
 }
 
 type LambdaGatewayConfig struct {
-	SupergraphSDLUpdateInterval int    `yaml:"supergraphSDLUpdateInterval"`
 	SupergraphSDLBucket         string `yaml:"supergraphSDLBucket"`
 	SupergraphSDLKey            string `yaml:"supergraphSDLKey"`
+	SupergraphSDLUpdateInterval int    `yaml:"supergraphSDLUpdateInterval"`
 }

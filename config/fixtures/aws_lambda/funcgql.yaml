@@ -1,5 +1,9 @@
 graphModulesRelPath: "GQL_ROOT_PATH"
 
 aws:
+  gateway:
+    supergraphSDLBucket: "SUPERGRAPH_SDL_BUCKET"
+    supergraphSDLKey: "SUPERGRAPH_SDL_KEY"
+    supergraphSDLUpdateInterval: 1234
   lambda:
     roleName: "LAMBDA_ROLE_NAME"

@@ -33,15 +33,15 @@ var templateContent string
 
 func render(cfg *config.LambdaGatewayConfig) (string, error) {
 	type templateData struct {
-		SupergraphSDLUpdateInterval int
 		SupergraphSDLBucket         string
 		SupergraphSDLKey            string
+		SupergraphSDLUpdateInterval int
 	}
 
 	data := templateData{
-		SupergraphSDLUpdateInterval: cfg.SupergraphSDLUpdateInterval,
 		SupergraphSDLBucket:         cfg.SupergraphSDLBucket,
 		SupergraphSDLKey:            cfg.SupergraphSDLKey,
+		SupergraphSDLUpdateInterval: cfg.SupergraphSDLUpdateInterval,
 	}
 
 	return template.Render("index", templateContent, data)
