@@ -6,6 +6,7 @@ import (
 	"github.com/funcgql/cli/cmd/flag"
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/go/module"
+	goworktemplate "github.com/funcgql/cli/go/work/template"
 	"github.com/funcgql/cli/gqlgen"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -36,7 +37,14 @@ var newCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println("🚧 Generating subgraph initial code", moduleName)
+		// Export go.work file after module is created since it needs to include the newly created module.
+		fmt.Println("🐭 Updating go.work file")
+		goWorkTemplate := goworktemplate.New()
+		if err := goWorkTemplate.Export(cfg.GraphModulesAbsPath); err != nil {
+			return errors.Wrapf(err, "failed to update go.work file in %s", cfg.GraphModulesAbsPath)
+		}
+
+		fmt.Println("🚧 Generating subgraph initial code")
 		gqlgenAPI := gqlgen.NewAPI()
 		if err := gqlgenAPI.Init(newModule.AbsPath(), newModule, functionTypes); err != nil {
 			return errors.Wrapf(err, "failed to run initialize GQL in %s", newModule.AbsPath())
@@ -49,10 +57,12 @@ var newCmd = &cobra.Command{
 		}
 
 		// Run generate again to update to templated schema after module has been updated.
-		fmt.Println("🏗  Updating subgraph initial code", moduleName)
+		fmt.Println("🏗  Updating subgraph initial code")
 		if err := gqlgenAPI.Generate(newModule.AbsPath()); err != nil {
 			return errors.Wrapf(err, "failed to update generated GQL code in %s", newModule.AbsPath())
 		}
+
+		fmt.Println("✅ Added new", moduleName, "subgraph")
 		return nil
 	},
 }
