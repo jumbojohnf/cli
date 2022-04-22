@@ -1,0 +1,52 @@
+import { APIGatewayProxyEvent, Context, Callback } from "aws-lambda";
+import { ApolloGateway } from "@apollo/gateway";
+import { ApolloServer } from "apollo-server-lambda";
+import { S3 } from "aws-sdk";
+
+const supergraphSDLUpdateInterval = {{.SupergraphSDLUpdateInterval}};
+
+const s3API = new S3();
+
+const loadSupergraphSDL = async (): Promise<string> => {
+  const output = await s3API.getObject({
+    Bucket: "{{.SupergraphSDLBucket}}",
+    Key: "{{.SupergraphSDLKey}}",
+  })
+  .promise()
+  return output.Body?.toString() || ""
+};
+
+const gateway = new ApolloGateway({
+  async supergraphSdl({ update, healthCheck }) {
+    // Periodically poll S3 for updated supergraph SDL.
+    const timerID = setInterval(async () => {
+      try {
+        const updatedSupergraphSDL = await loadSupergraphSDL();
+        // Perform health check to ensure the gateway is not updated unless all subgraphs are healthy.
+        await healthCheck(updatedSupergraphSDL);
+        update(updatedSupergraphSDL);
+      } catch (e) {
+        // Log error in case update fails so the gateway can continue running.
+        console.error(e);
+      }
+    }, supergraphSDLUpdateInterval);
+
+    return {
+      // Initial supergraph SDL.
+      supergraphSdl: await loadSupergraphSDL(),
+      async cleanup() {
+        clearInterval(timerID)
+      }
+    }
+  },
+});
+
+const server = new ApolloServer({
+  gateway,
+});
+
+const apolloHandler = server.createHandler();
+
+export const handler = (event: APIGatewayProxyEvent, context: Context, callback: Callback) => {
+  apolloHandler(event, context, callback)
+};
