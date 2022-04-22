@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"github.com/funcgql/cli/cmd/aws"
+	"github.com/funcgql/cli/cmd/flag"
+	"github.com/funcgql/cli/cmd/gateway"
 	"github.com/funcgql/cli/cmd/subgraph"
 	"github.com/spf13/cobra"
 )
@@ -22,6 +24,14 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.PersistentFlags().BoolVar(
+		&flag.IsLambdaTargetFunctionType,
+		"lambda",
+		false,
+		"If AWS lambda is a deploy target",
+	)
+
 	rootCmd.AddCommand(aws.AWSCmd)
+	rootCmd.AddCommand(gateway.GatewayCmd)
 	rootCmd.AddCommand(subgraph.SubgraphCmd)
 }

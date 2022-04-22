@@ -3,8 +3,8 @@ package subgraph
 import (
 	"fmt"
 
+	"github.com/funcgql/cli/cmd/flag"
 	"github.com/funcgql/cli/config"
-	"github.com/funcgql/cli/functype"
 	"github.com/funcgql/cli/go/module"
 	"github.com/funcgql/cli/gqlgen"
 	"github.com/pkg/errors"
@@ -16,7 +16,7 @@ var newCmd = &cobra.Command{
 	Short: "Create a new subgraph function go module",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		functionTypes := parseFunctionTypes()
+		functionTypes := flag.TargetFunctionTypes()
 		if len(functionTypes) <= 0 {
 			return errors.New("at least one cloud function type flag must be specified")
 		}
@@ -55,20 +55,4 @@ var newCmd = &cobra.Command{
 		}
 		return nil
 	},
-}
-
-var (
-	lambda bool
-)
-
-func init() {
-	newCmd.Flags().BoolVar(&lambda, "lambda", false, "If AWS lambda should be generated as a deploy target")
-}
-
-func parseFunctionTypes() []functype.FunctionType {
-	var results []functype.FunctionType
-	if lambda {
-		results = append(results, functype.Lambda)
-	}
-	return results
 }
