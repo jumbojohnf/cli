@@ -6,7 +6,7 @@ import (
 )
 
 type Gateway interface {
-	ExportIndexFile(rootDir string, cfg config.Config) error
+	ExportIndexFile(cfg *config.Config) error
 }
 
 func New(functionType functype.FunctionType) Gateway {
