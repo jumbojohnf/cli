@@ -3,10 +3,10 @@ package aws
 import (
 	"fmt"
 
-	"github.com/funcgql/cli/apollo"
 	"github.com/funcgql/cli/aws"
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/go/tools"
+	"github.com/funcgql/cli/rover"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -30,7 +30,7 @@ var initCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to install go tools")
 		}
 
-		if err := apollo.InstallRoverCLI(); err != nil {
+		if err := rover.InstallCLI(); err != nil {
 			return errors.Wrap(err, "failed to install Apollo Rover CLI")
 		}
 
