@@ -4,14 +4,15 @@ import (
 	"path/filepath"
 
 	"github.com/funcgql/cli/cliio"
+	"github.com/funcgql/cli/config"
 	modtemplate "github.com/funcgql/cli/go/module/template"
 	toolstemplate "github.com/funcgql/cli/go/tools/template"
 	"github.com/pkg/errors"
 )
 
-func New(name string, rootAbsPath string) (Module, error) {
+func New(name string, cfg *config.Config) (Module, error) {
 	dirName := filepath.Base(name)
-	absPath := filepath.Join(rootAbsPath, dirName)
+	absPath := filepath.Join(cfg.GraphModulesAbsPath, dirName)
 
 	newModuleDir := cliio.DirOf(absPath)
 	if err := newModuleDir.Make(); err != nil {

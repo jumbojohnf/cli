@@ -29,7 +29,7 @@ var newCmd = &cobra.Command{
 
 		moduleName := args[0]
 		fmt.Println("🐭 Creating go module", moduleName)
-		newModule, err := module.New(moduleName, cfg.GraphModulesAbsPath)
+		newModule, err := module.New(moduleName, cfg)
 		if err != nil {
 			errors.Wrapf(err, "failed to create new go module %s", moduleName)
 		}
