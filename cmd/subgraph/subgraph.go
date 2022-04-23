@@ -11,4 +11,5 @@ var SubgraphCmd = &cobra.Command{
 
 func init() {
 	SubgraphCmd.AddCommand(newCmd)
+	SubgraphCmd.AddCommand(updateCmd)
 }
