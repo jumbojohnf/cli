@@ -24,12 +24,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVar(
-		&flag.IsLambdaTargetFunctionType,
-		"lambda",
-		false,
-		"If AWS lambda is a deploy target",
-	)
+	flag.AddGlobalFlags(rootCmd)
 
 	rootCmd.AddCommand(aws.AWSCmd)
 	rootCmd.AddCommand(gateway.GatewayCmd)
