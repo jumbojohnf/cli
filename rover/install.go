@@ -1,4 +1,4 @@
-package apollo
+package rover
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func InstallRoverCLI() error {
+func InstallCLI() error {
 	if needsInstall, _ := needsInstall(); !needsInstall {
 		fmt.Println("✅  Rover CLI already installed")
 		return nil
@@ -34,7 +34,7 @@ const (
 )
 
 func needsInstall() (bool, error) {
-	api, err := NewRoverAPI()
+	api, err := NewAPI()
 	if err != nil {
 		return false, err
 	}

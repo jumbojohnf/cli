@@ -5,6 +5,7 @@ type Module interface {
 	DirName() string
 	AbsPath() string
 	Tidy() error
+	InstallTools() error
 }
 
 func (m module) Name() string {

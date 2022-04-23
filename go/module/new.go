@@ -4,15 +4,15 @@ import (
 	"path/filepath"
 
 	"github.com/funcgql/cli/cliio"
+	"github.com/funcgql/cli/config"
 	modtemplate "github.com/funcgql/cli/go/module/template"
 	toolstemplate "github.com/funcgql/cli/go/tools/template"
-	worktemplate "github.com/funcgql/cli/go/work/template"
 	"github.com/pkg/errors"
 )
 
-func New(name string, rootAbsPath string) (Module, error) {
+func New(name string, cfg *config.Config) (Module, error) {
 	dirName := filepath.Base(name)
-	absPath := filepath.Join(rootAbsPath, dirName)
+	absPath := filepath.Join(cfg.GraphModulesAbsPath, dirName)
 
 	newModuleDir := cliio.DirOf(absPath)
 	if err := newModuleDir.Make(); err != nil {
@@ -27,12 +27,6 @@ func New(name string, rootAbsPath string) (Module, error) {
 	modTemplate := modtemplate.New(name)
 	if err := modTemplate.Export(absPath); err != nil {
 		return nil, errors.Wrap(err, "failed to create new go.mod file")
-	}
-
-	// Export go.work file after module is created since it needs to include the newly created module.
-	goWorkTemplate := worktemplate.New()
-	if err := goWorkTemplate.Export(rootAbsPath); err != nil {
-		return nil, errors.Wrapf(err, "failed to update go.work file in %s", rootAbsPath)
 	}
 
 	return module{
