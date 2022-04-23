@@ -27,12 +27,10 @@ var initCmd = &cobra.Command{
 
 		dir := cliio.DirOf(cfg.GraphModulesAbsPath)
 
-		if _, err := dir.Exists(); err != nil {
-			return errors.Errorf("could not find config file", err)
-		}
-
 		if bool, err := dir.Exists(); !bool && err == nil {
-			return errors.Errorf("config file does not exist in working directory🤬\nCurrent working directory: ", dir)
+			return errors.Errorf("config file does not exist in the repo's directory🤬\nCurrent repo directory: ", cfg.GraphModulesAbsPath)
+		} else if _, err := dir.Exists(); err != nil {
+			return errors.Wrap(err, "could not find config file")
 		}
 
 		if bool, err := dir.Exists(); bool && err == nil {
