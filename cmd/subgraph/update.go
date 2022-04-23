@@ -2,7 +2,6 @@ package subgraph
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/funcgql/cli/cmd/flag"
 	"github.com/funcgql/cli/config"
@@ -20,7 +19,7 @@ var updateCmd = &cobra.Command{
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) > 0 {
-			return updateModule(args[0])
+			return updateNamed(args[0])
 		} else {
 			return updateCurrentDir()
 		}
@@ -37,7 +36,7 @@ func init() {
 	})
 }
 
-func updateModule(moduleName string) error {
+func updateNamed(moduleName string) error {
 	cfg, err := config.LoadFromRepoRoot()
 	if err != nil {
 		return err
@@ -49,26 +48,31 @@ func updateModule(moduleName string) error {
 		return errors.Errorf("module %s does not exist", moduleName)
 	}
 
-	fmt.Println("🏗  Updating subgraph source code of", moduleName)
+	return updateModule(targetModule)
+}
+
+func updateCurrentDir() error {
+	currentDirModule, exists, err := module.CurrentDir()
+	if err != nil {
+		return err
+	} else if !exists {
+		return errors.Wrap(err, "current directory does not contain a subgraph go module")
+	}
+
+	return updateModule(currentDirModule)
+}
+
+func updateModule(targetModule module.Module) error {
+	fmt.Println("🐭 Updating module", targetModule.Name(), "tools")
+	if err := targetModule.InstallTools(); err != nil {
+		return err
+	}
+
+	fmt.Println("🏗  Updating subgraph source code of", targetModule.Name())
 	if err := gqlgen.NewAPI().Generate(targetModule.AbsPath()); err != nil {
 		return err
 	}
 
-	fmt.Println("✅ Successfully updated module", moduleName)
-	return nil
-}
-
-func updateCurrentDir() error {
-	workingDirPath, err := os.Getwd()
-	if err != nil {
-		return errors.Wrap(err, "failed to determine current working directory path")
-	}
-
-	fmt.Println("🏗  Updating subgraph source code in current directory")
-	if err := gqlgen.NewAPI().Generate(workingDirPath); err != nil {
-		return err
-	}
-
-	fmt.Println("✅ Successfully updated subgraph module in", workingDirPath)
+	fmt.Println("✅ Successfully updated module", targetModule.Name())
 	return nil
 }
