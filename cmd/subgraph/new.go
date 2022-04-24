@@ -31,7 +31,7 @@ var newCmd = &cobra.Command{
 		fmt.Println("🐭 Creating go module", moduleName)
 		newModule, err := module.New(moduleName, cfg)
 		if err != nil {
-			errors.Wrapf(err, "failed to create new go module %s", moduleName)
+			return errors.Wrapf(err, "failed to create new go module %s", moduleName)
 		}
 		if err := newModule.InstallTools(); err != nil {
 			return err

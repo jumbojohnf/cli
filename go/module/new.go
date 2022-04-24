@@ -15,6 +15,11 @@ func New(name string, cfg *config.Config) (Module, error) {
 	absPath := filepath.Join(cfg.GraphModulesAbsPath, dirName)
 
 	newModuleDir := cliio.DirOf(absPath)
+	if alreadyExists, err := newModuleDir.Exists(); err != nil {
+		return nil, errors.Wrapf(err, "failed to determine if new module directory %s already exists", newModuleDir.AbsPath())
+	} else if alreadyExists {
+		return nil, errors.Errorf("new module directory %s already exists", newModuleDir.AbsPath())
+	}
 	if err := newModuleDir.Make(); err != nil {
 		return nil, errors.Wrapf(err, "failed to create new module directory %s", absPath)
 	}
