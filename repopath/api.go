@@ -1,15 +1,29 @@
 package repopath
 
-import "github.com/funcgql/cli/shell"
+import (
+	"strings"
 
-type RepoPath struct {
-	Path string
+	"github.com/funcgql/cli/shell"
+)
+
+type API interface {
+	RootPath() (string, error)
 }
 
-func GitRepoPath() (RepoPath, error) {
-	output, err := shell.Execute("git", "rev-parse", "--show-toplevel")
-	if err != nil {
-		return RepoPath{}, err
+func NewAPI(shellAPI shell.API) API {
+	return &api{
+		shellAPI: shellAPI,
 	}
-	return RepoPath{Path: output.Combined}, nil
+}
+
+func (a *api) RootPath() (string, error) {
+	output, err := a.shellAPI.Execute("git", "rev-parse", "--show-toplevel")
+	if err != nil {
+		return "", err
+	}
+	return strings.Trim(output.Combined, " \n"), nil
+}
+
+type api struct {
+	shellAPI shell.API
 }

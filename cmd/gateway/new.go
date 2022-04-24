@@ -6,6 +6,9 @@ import (
 	"github.com/funcgql/cli/cmd/flag"
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/gateway"
+	"github.com/funcgql/cli/npm"
+	"github.com/funcgql/cli/repopath"
+	"github.com/funcgql/cli/shell"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -19,7 +22,10 @@ var newCmd = &cobra.Command{
 			return errors.New("at least one cloud function type flag must be specified")
 		}
 
-		cfg, err := config.LoadFromRepoRoot()
+		shellAPI := shell.NewAPI()
+		repoPathAPI := repopath.NewAPI(shellAPI)
+
+		cfg, err := config.LoadFromRepoRoot(repoPathAPI)
 		if err != nil {
 			return err
 		}
@@ -32,7 +38,8 @@ var newCmd = &cobra.Command{
 			}
 
 			fmt.Println("📦 Installing NPM packages")
-			if err := newGateway.InstallPackages(); err != nil {
+			npmAPI := npm.NewAPI(shellAPI)
+			if err := newGateway.InstallPackages(npmAPI); err != nil {
 				return err
 			}
 

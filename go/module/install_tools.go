@@ -1,7 +1,9 @@
 package module
 
-import "github.com/funcgql/cli/go/tools"
+import (
+	"github.com/funcgql/cli/go/tools"
+)
 
-func (m module) InstallTools() error {
-	return tools.InstallAllIn(m.absPath)
+func (m module) InstallTools(toolsAPI tools.API) error {
+	return toolsAPI.InstallAllIn(m.absPath)
 }

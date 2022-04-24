@@ -6,7 +6,10 @@ import (
 	"github.com/funcgql/cli/cmd/flag"
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/go/module"
+	"github.com/funcgql/cli/go/tools"
 	"github.com/funcgql/cli/gqlgen"
+	"github.com/funcgql/cli/repopath"
+	"github.com/funcgql/cli/shell"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -37,7 +40,10 @@ func init() {
 }
 
 func updateNamed(moduleName string) error {
-	cfg, err := config.LoadFromRepoRoot()
+	shellAPI := shell.NewAPI()
+	repoPathAPI := repopath.NewAPI(shellAPI)
+
+	cfg, err := config.LoadFromRepoRoot(repoPathAPI)
 	if err != nil {
 		return err
 	}
@@ -52,7 +58,9 @@ func updateNamed(moduleName string) error {
 }
 
 func updateCurrentDir() error {
-	currentDirModule, exists, err := module.CurrentDir()
+	shellAPI := shell.NewAPI()
+
+	currentDirModule, exists, err := module.CurrentDir(shellAPI)
 	if err != nil {
 		return err
 	} else if !exists {
@@ -63,13 +71,16 @@ func updateCurrentDir() error {
 }
 
 func updateModule(targetModule module.Module) error {
+	shellAPI := shell.NewAPI()
+	toolsAPI := tools.NewAPI(shellAPI)
+
 	fmt.Println("🐭 Updating module", targetModule.Name(), "tools")
-	if err := targetModule.InstallTools(); err != nil {
+	if err := targetModule.InstallTools(toolsAPI); err != nil {
 		return err
 	}
 
 	fmt.Println("🏗  Updating subgraph source code of", targetModule.Name())
-	if err := gqlgen.NewAPI().Generate(targetModule.AbsPath()); err != nil {
+	if err := gqlgen.NewAPI(toolsAPI).Generate(targetModule.AbsPath()); err != nil {
 		return err
 	}
 

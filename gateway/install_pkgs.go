@@ -5,7 +5,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (g gateway) InstallPackages() error {
+func (g gateway) InstallPackages(npmAPI npm.API) error {
 	var packages = []string{
 		"@apollo/gateway",
 		"apollo-server-lambda",
@@ -13,7 +13,7 @@ func (g gateway) InstallPackages() error {
 		"aws-sdk",
 	}
 
-	if err := npm.InstallIn(g.absPath, packages...); err != nil {
+	if err := npmAPI.InstallIn(g.absPath, packages...); err != nil {
 		return errors.Wrapf(err, "failed to install NPM packages in %s", g.absPath)
 	}
 	return nil

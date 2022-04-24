@@ -6,8 +6,11 @@ import (
 	"github.com/funcgql/cli/cmd/flag"
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/go/module"
+	"github.com/funcgql/cli/go/tools"
 	goworktemplate "github.com/funcgql/cli/go/work/template"
 	"github.com/funcgql/cli/gqlgen"
+	"github.com/funcgql/cli/repopath"
+	"github.com/funcgql/cli/shell"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -22,7 +25,10 @@ var newCmd = &cobra.Command{
 			return errors.New("at least one cloud function type flag must be specified")
 		}
 
-		cfg, err := config.LoadFromRepoRoot()
+		shellAPI := shell.NewAPI()
+		repoPathAPI := repopath.NewAPI(shellAPI)
+
+		cfg, err := config.LoadFromRepoRoot(repoPathAPI)
 		if err != nil {
 			return err
 		}
@@ -33,7 +39,8 @@ var newCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrapf(err, "failed to create new go module %s", moduleName)
 		}
-		if err := newModule.InstallTools(); err != nil {
+		toolsAPI := tools.NewAPI(shellAPI)
+		if err := newModule.InstallTools(toolsAPI); err != nil {
 			return err
 		}
 
@@ -45,14 +52,14 @@ var newCmd = &cobra.Command{
 		}
 
 		fmt.Println("🚧 Generating subgraph initial code")
-		gqlgenAPI := gqlgen.NewAPI()
+		gqlgenAPI := gqlgen.NewAPI(toolsAPI)
 		if err := gqlgenAPI.Init(newModule.AbsPath(), newModule, functionTypes); err != nil {
 			return errors.Wrapf(err, "failed to run initialize GQL in %s", newModule.AbsPath())
 		}
 
 		// Run tidy last after all the generated code is in place.
 		fmt.Println("🧹 Tidying", moduleName)
-		if err := newModule.Tidy(); err != nil {
+		if err := newModule.Tidy(shellAPI); err != nil {
 			return errors.Wrapf(err, "failed to tidy %s", newModule.Name())
 		}
 

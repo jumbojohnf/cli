@@ -8,11 +8,10 @@ import (
 	"strings"
 
 	"github.com/funcgql/cli/cliio"
-	"github.com/funcgql/cli/shell"
 	"github.com/pkg/errors"
 )
 
-func InstallAllIn(dir string) error {
+func (a *api) InstallAllIn(dir string) error {
 	tools, err := goToolsIn(dir)
 	if err != nil {
 		return err
@@ -20,7 +19,7 @@ func InstallAllIn(dir string) error {
 	for _, tool := range tools {
 		for _, toolName := range tool.toolNames {
 			fmt.Println("🐭 Installing", toolName, "in", tool.modulePath)
-			if output, err := shell.ExecuteIn(tool.modulePath, "go", "install", toolName); err != nil {
+			if output, err := a.shellAPI.ExecuteIn(tool.modulePath, "go", "install", toolName); err != nil {
 				return errors.Wrapf(err, "failed to install %s in %s %s", toolName, tool.modulePath, output.Combined)
 			}
 		}

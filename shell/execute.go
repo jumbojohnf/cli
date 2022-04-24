@@ -10,18 +10,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Output struct {
-	ExitCode int
-	Stdout   string
-	Stderr   string
-	Combined string
+func (a *api) Execute(cmdName string, args ...string) (Output, error) {
+	return a.ExecuteIn("", cmdName, args...)
 }
 
-func Execute(cmdName string, args ...string) (Output, error) {
-	return ExecuteIn("", cmdName, args...)
-}
-
-func ExecuteIn(dir string, cmdName string, args ...string) (Output, error) {
+func (a *api) ExecuteIn(dir string, cmdName string, args ...string) (Output, error) {
 	cmdPath, err := exec.LookPath(cmdName)
 	if err != nil {
 		return Output{}, err

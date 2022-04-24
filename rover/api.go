@@ -8,10 +8,13 @@ import (
 )
 
 type API interface {
+	HasCLI() (bool, error)
+	InstallCLI() error
+
 	execute(args ...string) (shell.Output, error)
 }
 
-func NewAPI() (API, error) {
+func NewAPI(shellAPI shell.API) (API, error) {
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
 		return nil, err
@@ -19,13 +22,17 @@ func NewAPI() (API, error) {
 
 	const binaryRelativePath = ".rover/bin/rover"
 	binaryPath := filepath.Join(userHomeDir, binaryRelativePath)
-	return &api{binaryPath: binaryPath}, nil
+	return &api{
+		binaryPath: binaryPath,
+		shellAPI:   shellAPI,
+	}, nil
 }
 
 type api struct {
 	binaryPath string
+	shellAPI   shell.API
 }
 
 func (a *api) execute(args ...string) (shell.Output, error) {
-	return shell.Execute(a.binaryPath, args...)
+	return a.shellAPI.Execute(a.binaryPath, args...)
 }

@@ -1,11 +1,12 @@
 package module
 
 import (
+	"github.com/funcgql/cli/shell"
 	"github.com/pkg/errors"
 )
 
-func (m module) Tidy() error {
-	if output, err := m.execute("tidy"); err != nil {
+func (m module) Tidy(shellAPI shell.API) error {
+	if output, err := shellAPI.ExecuteIn(m.absPath, "go", "mod", "tidy"); err != nil {
 		return errors.Wrap(err, output.Combined)
 	}
 	return nil

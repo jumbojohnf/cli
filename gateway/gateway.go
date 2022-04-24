@@ -5,11 +5,12 @@ import (
 
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/functype"
+	"github.com/funcgql/cli/npm"
 )
 
 type Gateway interface {
 	ExportIndexFile(cfg *config.Config) error
-	InstallPackages() error
+	InstallPackages(npmAPI npm.API) error
 }
 
 func New(functionType functype.FunctionType, cfg *config.Config) Gateway {
