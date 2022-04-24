@@ -12,7 +12,7 @@ import (
 )
 
 var updateCmd = &cobra.Command{
-	Use:   "update [name of subgraph module | subgraph module in current directory]",
+	Use:   "update [name of subgraph module | subgraph module in the current directory]",
 	Short: "Update the source code of a subgraph module",
 	Long: "Update the source code of the specified subgraph module or the subgraph module in the current working " +
 		"directory based on the schema file",
