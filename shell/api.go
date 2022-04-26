@@ -2,7 +2,9 @@ package shell
 
 type API interface {
 	Execute(cmdName string, args ...string) (Output, error)
+	ExecuteWithIO(cmdName string, args ...string) (Output, error)
 	ExecuteIn(dir string, cmdName string, args ...string) (Output, error)
+	ExecuteWithIOIn(dir string, cmdName string, args ...string) (Output, error)
 }
 
 type Output struct {
