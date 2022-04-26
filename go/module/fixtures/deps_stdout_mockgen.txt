@@ -1,0 +1,5 @@
+github.com/funcgql/cli
+github.com/cpuguy83/go-md2man/v2 v2.0.1
+github.com/davecgh/go-spew v1.1.0
+github.com/golang/mock v1.6.0
+github.com/golang/mock/mockgen v1.6.0

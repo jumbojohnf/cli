@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/funcgql/cli/cliio"
+	"github.com/funcgql/cli/shell"
 	"github.com/pkg/errors"
 )
 
@@ -29,4 +30,27 @@ func (m module) Tools() ([]Tool, error) {
 	}
 
 	return results, nil
+}
+
+func (m module) InstallAllTools(shellAPI shell.API) error {
+	tools, err := m.Tools()
+	if err != nil {
+		return err
+	}
+	dependencies, err := m.Dependencies(shellAPI)
+	if err != nil {
+		return err
+	}
+
+	for _, tool := range tools {
+		// Find tool's version by matching with dependencies.
+		dep, hasMatch := dependencies[tool.ImportPath]
+		if hasMatch {
+			tool.Install(dep.Version, shellAPI)
+		} else {
+			tool.Install("latest", shellAPI)
+		}
+	}
+
+	return nil
 }
