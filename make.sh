@@ -23,7 +23,6 @@ function run
   if [ $cmd == "deploy" ]; then
     deploy $@
   elif [ $cmd == "test" ]; then
-    generate_mocks
     test_all
   elif [ $cmd == "genmocks" ]; then
     generate_mocks
