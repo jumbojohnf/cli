@@ -5,8 +5,8 @@ import (
 
 	"github.com/funcgql/cli/cliio"
 	"github.com/funcgql/cli/config"
-	modtemplate "github.com/funcgql/cli/go/module/template"
-	toolstemplate "github.com/funcgql/cli/go/tools/template"
+	modtemplate "github.com/funcgql/cli/go/module/template/gomod"
+	toolstemplate "github.com/funcgql/cli/go/module/template/tools"
 	"github.com/pkg/errors"
 )
 

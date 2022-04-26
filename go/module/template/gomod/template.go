@@ -1,4 +1,4 @@
-package template
+package gomod
 
 import (
 	_ "embed"
