@@ -48,7 +48,7 @@ func (t goWorkTemplate) contentData(rootDir string) (interface{}, error) {
 		return nil, errors.Wrapf(err, "failed to obtain top-level module directory names in %s", rootDir)
 	}
 	return templateData{
-		GoVersion:      version.Current(),
+		GoVersion:      version.Current().MajorMinor(),
 		ModuleDirNames: moduleDirNames,
 	}, nil
 }

@@ -45,7 +45,7 @@ func (t goModTemplate) templateContentData() (interface{}, error) {
 	}
 	return templateData{
 		ModuleName: t.moduleName,
-		GoVersion:  version.Current(),
+		GoVersion:  version.Current().MajorMinor(),
 	}, nil
 }
 
