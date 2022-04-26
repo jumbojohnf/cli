@@ -12,27 +12,29 @@ type Dependency struct {
 	Version    string
 }
 
-func (m module) Dependencies(shellAPI shell.API) ([]Dependency, error) {
+func (m module) Dependencies(shellAPI shell.API) (map[string]Dependency, error) {
 	output, err := shellAPI.ExecuteIn(m.absPath, "go", "list", "-m", "all")
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list dependencies for %s", m.name)
 	}
 	data := strings.Trim(output.Stdout, " \n")
 
-	var results []Dependency
+	results := map[string]Dependency{}
 	for _, line := range strings.Split(data, "\n") {
 		depData := strings.Split(line, " ")
 		if len(depData) == 0 {
 			continue
 		} else if len(depData) == 1 {
-			results = append(results, Dependency{
-				ImportPath: depData[0],
-			})
+			importPath := depData[0]
+			results[importPath] = Dependency{
+				ImportPath: importPath,
+			}
 		} else {
-			results = append(results, Dependency{
-				ImportPath: depData[0],
+			importPath := depData[0]
+			results[importPath] = Dependency{
+				ImportPath: importPath,
 				Version:    depData[1],
-			})
+			}
 		}
 	}
 	return results, nil

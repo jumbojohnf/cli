@@ -31,19 +31,19 @@ func Test_Dependencies(t *testing.T) {
 	results, err := m.Dependencies(shellAPI)
 
 	require.NoError(t, err)
-	require.Equal(t, []Dependency{
-		{
+	require.Equal(t, map[string]Dependency{
+		"github.com/funcgql/cli": {
 			ImportPath: "github.com/funcgql/cli",
 		},
-		{
+		"github.com/cpuguy83/go-md2man/v2": {
 			ImportPath: "github.com/cpuguy83/go-md2man/v2",
 			Version:    "v2.0.1",
 		},
-		{
+		"github.com/davecgh/go-spew": {
 			ImportPath: "github.com/davecgh/go-spew",
 			Version:    "v1.1.0",
 		},
-		{
+		"github.com/golang/mock": {
 			ImportPath: "github.com/golang/mock",
 			Version:    "v1.6.0",
 		},
