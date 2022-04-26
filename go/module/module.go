@@ -10,6 +10,7 @@ type Module interface {
 	DirName() string
 	AbsPath() string
 	Tidy(shellAPI shell.API) error
+	Tools() ([]Tool, error)
 	InstallTools(toolsAPI tools.API) error
 }
 
