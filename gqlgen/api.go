@@ -3,20 +3,20 @@ package gqlgen
 import (
 	"github.com/funcgql/cli/functype"
 	"github.com/funcgql/cli/go/module"
-	"github.com/funcgql/cli/go/tools"
+	"github.com/funcgql/cli/shell"
 )
 
 type API interface {
-	Init(absPath string, targetModule module.Module, functionTypes []functype.FunctionType) error
-	Generate(absPath string) error
+	Init(targetModule module.Module, functionTypes []functype.FunctionType) error
+	Generate(targetModule module.Module) error
 }
 
-func NewAPI(toolsAPI tools.API) API {
+func NewAPI(shellAPI shell.API) API {
 	return &api{
-		toolsAPI: toolsAPI,
+		shellAPI: shellAPI,
 	}
 }
 
 type api struct {
-	toolsAPI tools.API
+	shellAPI shell.API
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/funcgql/cli/cmd/flag"
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/go/module"
-	"github.com/funcgql/cli/go/tools"
 	"github.com/funcgql/cli/gqlgen"
 	"github.com/funcgql/cli/repopath"
 	"github.com/funcgql/cli/shell"
@@ -72,7 +71,6 @@ func updateCurrentDir() error {
 
 func updateModule(targetModule module.Module) error {
 	shellAPI := shell.NewAPI()
-	toolsAPI := tools.NewAPI(shellAPI)
 
 	fmt.Println("🐭 Updating module", targetModule.Name(), "tools")
 	if err := targetModule.InstallAllTools(shellAPI); err != nil {
@@ -80,7 +78,7 @@ func updateModule(targetModule module.Module) error {
 	}
 
 	fmt.Println("🏗  Updating subgraph source code of", targetModule.Name())
-	if err := gqlgen.NewAPI(toolsAPI).Generate(targetModule.AbsPath()); err != nil {
+	if err := gqlgen.NewAPI(shellAPI).Generate(targetModule); err != nil {
 		return err
 	}
 

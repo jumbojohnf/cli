@@ -9,6 +9,7 @@ type Module interface {
 	DirName() string
 	AbsPath() string
 	Tidy(shellAPI shell.API) error
+	ToolOf(importPath string) Tool
 	Tools() ([]Tool, error)
 	InstallAllTools(shellAPI shell.API) error
 }
