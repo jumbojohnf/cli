@@ -3,6 +3,7 @@ package shell
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -25,8 +26,9 @@ func (a *api) ExecuteIn(dir string, cmdName string, args ...string) (Output, err
 	cmd := exec.Command(cmdPath, args...)
 	cmd.Dir = dir
 	cmd.Env = os.Environ()
-	cmd.Stdout = outputStream
-	cmd.Stderr = errorStream
+	cmd.Stdout = io.MultiWriter(outputStream, os.Stdout)
+	cmd.Stderr = io.MultiWriter(errorStream, os.Stderr)
+	cmd.Stdin = os.Stdin
 
 	executionErr := cmd.Run()
 	stdout := strings.TrimSpace(outputStream.String())
