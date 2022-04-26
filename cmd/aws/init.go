@@ -5,7 +5,6 @@ import (
 
 	"github.com/funcgql/cli/aws"
 	"github.com/funcgql/cli/config"
-	"github.com/funcgql/cli/go/tools"
 	"github.com/funcgql/cli/repopath"
 	"github.com/funcgql/cli/rover"
 	"github.com/funcgql/cli/shell"
@@ -30,10 +29,6 @@ var initCmd = &cobra.Command{
 		}
 
 		fmt.Println("🌳 Setting up AWS development environment in", cfg.GraphModulesAbsPath)
-		toolsAPI := tools.NewAPI(shellAPI)
-		if err := toolsAPI.InstallAllIn(cfg.GraphModulesAbsPath); err != nil {
-			return errors.Wrap(err, "failed to install go tools")
-		}
 
 		roverAPI, err := rover.NewAPI(shellAPI)
 		if err != nil {

@@ -75,7 +75,7 @@ func updateModule(targetModule module.Module) error {
 	toolsAPI := tools.NewAPI(shellAPI)
 
 	fmt.Println("🐭 Updating module", targetModule.Name(), "tools")
-	if err := targetModule.InstallTools(toolsAPI); err != nil {
+	if err := targetModule.InstallAllTools(shellAPI); err != nil {
 		return err
 	}
 

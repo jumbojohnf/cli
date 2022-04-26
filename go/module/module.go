@@ -1,7 +1,6 @@
 package module
 
 import (
-	"github.com/funcgql/cli/go/tools"
 	"github.com/funcgql/cli/shell"
 )
 
@@ -11,7 +10,7 @@ type Module interface {
 	AbsPath() string
 	Tidy(shellAPI shell.API) error
 	Tools() ([]Tool, error)
-	InstallTools(toolsAPI tools.API) error
+	InstallAllTools(shellAPI shell.API) error
 }
 
 func (m module) Name() string {
