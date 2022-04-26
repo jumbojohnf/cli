@@ -8,7 +8,7 @@ import (
 )
 
 func (a *api) HasCLI() (bool, error) {
-	output, err := a.execute("--version")
+	output, err := a.shellAPI.Execute(a.binaryPath, "--version")
 	if err != nil {
 		return false, err
 	}
@@ -21,7 +21,7 @@ func (a *api) InstallCLI() error {
 		return errors.Wrap(err, "failed to download Rover CLI installer script")
 	}
 
-	if _, err := a.shellAPI.Execute("/bin/sh", installer.Name()); err != nil {
+	if _, err := a.shellAPI.ExecuteWithIO("/bin/sh", installer.Name()); err != nil {
 		return err
 	}
 

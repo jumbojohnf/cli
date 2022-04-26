@@ -10,8 +10,6 @@ import (
 type API interface {
 	HasCLI() (bool, error)
 	InstallCLI() error
-
-	execute(args ...string) (shell.Output, error)
 }
 
 func NewAPI(shellAPI shell.API) (API, error) {
@@ -31,8 +29,4 @@ func NewAPI(shellAPI shell.API) (API, error) {
 type api struct {
 	binaryPath string
 	shellAPI   shell.API
-}
-
-func (a *api) execute(args ...string) (shell.Output, error) {
-	return a.shellAPI.Execute(a.binaryPath, args...)
 }

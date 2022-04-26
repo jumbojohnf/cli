@@ -44,7 +44,7 @@ func Test_InstallAllTools_noVersion(t *testing.T) {
 		}, nil)
 
 	shellAPI.EXPECT().
-		ExecuteIn("fixtures/module1", "go", "install", "github.com/golang/mock/mockgen@latest").
+		ExecuteWithIOIn("fixtures/module1", "go", "install", "github.com/golang/mock/mockgen@latest").
 		Return(shell.Output{}, nil)
 
 	err = m.InstallAllTools(shellAPI)
@@ -71,7 +71,7 @@ func Test_InstallAllTools_hasVersion(t *testing.T) {
 		}, nil)
 
 	shellAPI.EXPECT().
-		ExecuteIn("fixtures/module1", "go", "install", "github.com/golang/mock/mockgen@v1.6.0").
+		ExecuteWithIOIn("fixtures/module1", "go", "install", "github.com/golang/mock/mockgen@v1.6.0").
 		Return(shell.Output{}, nil)
 
 	err = m.InstallAllTools(shellAPI)

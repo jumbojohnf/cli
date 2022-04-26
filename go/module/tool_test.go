@@ -20,7 +20,7 @@ func Test_Install(t *testing.T) {
 
 	shellAPI := mocks.NewMockAPI(mockCtrl)
 	shellAPI.EXPECT().
-		ExecuteIn("MODULE_PATH", "go", "install", "IMPORT_PATH@VERSION").
+		ExecuteWithIOIn("MODULE_PATH", "go", "install", "IMPORT_PATH@VERSION").
 		Return(shell.Output{}, nil)
 
 	err := targetTool.Install("VERSION", shellAPI)

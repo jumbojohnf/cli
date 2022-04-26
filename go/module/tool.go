@@ -14,7 +14,7 @@ type Tool struct {
 
 func (t Tool) Install(version string, shellAPI shell.API) error {
 	versionedImportPath := fmt.Sprintf("%s@%s", t.ImportPath, version)
-	if output, err := shellAPI.ExecuteIn(t.moduleAbsPath, "go", "install", versionedImportPath); err != nil {
+	if output, err := shellAPI.ExecuteWithIOIn(t.moduleAbsPath, "go", "install", versionedImportPath); err != nil {
 		return errors.Wrapf(err, "failed to install %s in %s %s", versionedImportPath, t.moduleAbsPath, output.Combined)
 	}
 
@@ -23,5 +23,5 @@ func (t Tool) Install(version string, shellAPI shell.API) error {
 
 func (t Tool) Run(shellAPI shell.API, args ...string) (shell.Output, error) {
 	goArgs := append([]string{"run", t.ImportPath}, args...)
-	return shellAPI.ExecuteIn(t.moduleAbsPath, "go", goArgs...)
+	return shellAPI.ExecuteWithIOIn(t.moduleAbsPath, "go", goArgs...)
 }

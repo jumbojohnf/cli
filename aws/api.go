@@ -12,8 +12,6 @@ type API interface {
 	CreateLambdaRole() error
 	HasCLI() (bool, error)
 	InstallCLI() error
-
-	execute(args ...string) (shell.Output, error)
 }
 
 func NewAPI(shellAPI shell.API, repoPathAPI repopath.API, cfg *config.Config) (API, error) {
@@ -33,8 +31,4 @@ type api struct {
 	binaryPath string
 	cfg        config.AWSConfig
 	shellAPI   shell.API
-}
-
-func (a *api) execute(args ...string) (shell.Output, error) {
-	return a.shellAPI.Execute(a.binaryPath, args...)
 }

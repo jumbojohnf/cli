@@ -84,7 +84,7 @@ func (p mockTargetPackage) generate(shellAPI shell.API) error {
 	for _, interafaceName := range p.interfaceNames {
 		fmt.Println("🥸  Generating mocks for", p.packageImportPath, interafaceName)
 
-		if _, err := shellAPI.Execute(
+		if _, err := shellAPI.ExecuteWithIO(
 			"go", "run", mockGen,
 			fmt.Sprintf("-destination=%s/%s/mock_%s.go", p.packageRelPath, mocksPackageName, strings.ToLower(interafaceName)),
 			fmt.Sprintf("-package=%s", mocksPackageName),

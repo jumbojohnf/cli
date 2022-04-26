@@ -9,7 +9,7 @@ import (
 )
 
 func (a *api) HasCLI() (bool, error) {
-	output, err := a.execute("--version")
+	output, err := a.shellAPI.Execute(a.binaryPath, "--version")
 	if err != nil {
 		return true, err
 	}
@@ -24,7 +24,7 @@ func (a *api) InstallCLI() error {
 	}
 	defer os.Remove(installer.Name())
 
-	if output, err := a.shellAPI.Execute("sudo", "installer", "-pkg", installer.Name(), "-target", "/"); err != nil {
+	if output, err := a.shellAPI.ExecuteWithIO("sudo", "installer", "-pkg", installer.Name(), "-target", "/"); err != nil {
 		return errors.Wrapf(err, "failed to run AWS CLI installer %s %s", installer.Name(), output.Combined)
 	}
 

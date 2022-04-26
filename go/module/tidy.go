@@ -6,7 +6,7 @@ import (
 )
 
 func (m module) Tidy(shellAPI shell.API) error {
-	if output, err := shellAPI.ExecuteIn(m.absPath, "go", "mod", "tidy"); err != nil {
+	if output, err := shellAPI.ExecuteWithIOIn(m.absPath, "go", "mod", "tidy"); err != nil {
 		return errors.Wrap(err, output.Combined)
 	}
 	return nil
