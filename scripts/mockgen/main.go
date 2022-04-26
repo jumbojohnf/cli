@@ -56,6 +56,7 @@ func loadConfigFrom(path string) (map[string][]string, error) {
 }
 
 const (
+	mockGen          = "github.com/golang/mock/mockgen"
 	moduleImportPath = "github.com/funcgql/cli"
 	mocksPackageName = "mocks"
 )
@@ -81,10 +82,10 @@ func mockTargetPackagesFrom(data map[string][]string) []mockTargetPackage {
 
 func (p mockTargetPackage) generate(shellAPI shell.API) error {
 	for _, interafaceName := range p.interfaceNames {
-		fmt.Println("Generating mocks for", p.packageImportPath, interafaceName)
+		fmt.Println("🥸  Generating mocks for", p.packageImportPath, interafaceName)
 
 		if _, err := shellAPI.Execute(
-			"mockgen",
+			"go", "run", mockGen,
 			fmt.Sprintf("-destination=%s/%s/mock_%s.go", p.packageRelPath, mocksPackageName, strings.ToLower(interafaceName)),
 			fmt.Sprintf("-package=%s", mocksPackageName),
 			p.packageImportPath,
