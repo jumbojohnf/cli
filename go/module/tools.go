@@ -9,6 +9,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+func (m module) ToolOf(importPath string) Tool {
+	return Tool{
+		ImportPath:    importPath,
+		moduleAbsPath: m.absPath,
+	}
+}
+
 func (m module) Tools() ([]Tool, error) {
 	const toolsFilename = "tools.go"
 	toolsFile := cliio.FileOf(filepath.Join(m.absPath, toolsFilename))

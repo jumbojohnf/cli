@@ -20,3 +20,8 @@ func (t Tool) Install(version string, shellAPI shell.API) error {
 
 	return nil
 }
+
+func (t Tool) Run(shellAPI shell.API, args ...string) (shell.Output, error) {
+	goArgs := append([]string{"run", t.ImportPath}, args...)
+	return shellAPI.ExecuteIn(t.moduleAbsPath, "go", goArgs...)
+}
