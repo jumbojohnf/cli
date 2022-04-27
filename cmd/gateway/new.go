@@ -32,8 +32,8 @@ var newCmd = &cobra.Command{
 
 		for _, functionType := range functionTypes {
 			fmt.Println("🌉 Generating", functionType, "Apollo gateway")
-			newGateway := gateway.New(functionType, cfg)
-			if err := newGateway.ExportIndexFile(cfg); err != nil {
+			newGateway, err := gateway.New(functionType, cfg)
+			if err != nil {
 				return err
 			}
 
