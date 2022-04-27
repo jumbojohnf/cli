@@ -38,7 +38,7 @@ var newCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrapf(err, "failed to create new go module %s", moduleName)
 		}
-		if err := newModule.InstallAllTools(shellAPI); err != nil {
+		if err := newModule.InstallInitialTools(shellAPI); err != nil {
 			return err
 		}
 

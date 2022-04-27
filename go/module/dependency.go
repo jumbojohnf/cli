@@ -17,7 +17,7 @@ func (m module) Dependencies(shellAPI shell.API) (map[string]Dependency, error) 
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list dependencies for %s", m.name)
 	}
-	data := strings.Trim(output.Stdout, " \n")
+	data := strings.Trim(output.Stdout, " \t\n")
 
 	results := map[string]Dependency{}
 	for _, line := range strings.Split(data, "\n") {

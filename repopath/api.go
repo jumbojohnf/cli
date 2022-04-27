@@ -21,7 +21,7 @@ func (a *api) RootPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return strings.Trim(output.Combined, " \n"), nil
+	return strings.Trim(output.Combined, " \t\n"), nil
 }
 
 type api struct {

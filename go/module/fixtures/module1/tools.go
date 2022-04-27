@@ -1,6 +1,6 @@
 //go:build tools
 
-package module1
+package main
 
 import (
 	_ "github.com/golang/mock/mockgen"

@@ -11,6 +11,7 @@ type Module interface {
 	Tidy(shellAPI shell.API) error
 	ToolOf(importPath string) Tool
 	Tools() ([]Tool, error)
+	InstallInitialTools(shellAPI shell.API) error
 	InstallAllTools(shellAPI shell.API) error
 }
 

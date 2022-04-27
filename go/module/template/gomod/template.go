@@ -8,6 +8,8 @@ import (
 	"github.com/funcgql/cli/template"
 )
 
+const Filename = "go.mod"
+
 type GoModTemplate interface {
 	Export(rootDir string) error
 }
@@ -24,8 +26,7 @@ func (t goModTemplate) Export(dirAbsPath string) error {
 		return err
 	}
 
-	const filename = "go.mod"
-	if _, err := template.Export(content, filepath.Join(dirAbsPath, filename)); err != nil {
+	if _, err := template.Export(content, filepath.Join(dirAbsPath, Filename)); err != nil {
 		return err
 	}
 	return nil

@@ -10,8 +10,7 @@ require (
 )
 
 exclude (
-	github.com/funcgql/cli/template/fixtures/mod_1 v0.0.0
-	github.com/funcgql/cli/template/fixtures/mod_2 v0.0.0
+	github.com/funcgql/cli/go/module/fixtures/module1 v0.0.0
 )
 
 require (
