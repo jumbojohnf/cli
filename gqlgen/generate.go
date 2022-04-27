@@ -1,5 +1,7 @@
 package gqlgen
 
-func (a *api) Generate(absPath string) error {
-	return a.runIn("generate", absPath)
+import "github.com/funcgql/cli/go/module"
+
+func (a *api) Generate(targetModule module.Module) error {
+	return a.run("generate", targetModule)
 }

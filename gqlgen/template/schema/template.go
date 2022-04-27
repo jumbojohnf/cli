@@ -10,6 +10,11 @@ import (
 	"golang.org/x/text/language"
 )
 
+const (
+	DirName  = "graph"
+	Filename = "schema.graphqls"
+)
+
 type SchemaTemplate interface {
 	Export(rootDir string) error
 }
@@ -26,11 +31,7 @@ func (t schemaTemplate) Export(rootDir string) error {
 		return err
 	}
 
-	const (
-		filename = "schema.graphqls"
-		dirName  = "graph"
-	)
-	if _, err := template.Export(content, filepath.Join(rootDir, dirName, filename)); err != nil {
+	if _, err := template.Export(content, filepath.Join(rootDir, DirName, Filename)); err != nil {
 		return err
 	}
 	return nil

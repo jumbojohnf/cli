@@ -2,25 +2,26 @@ package subgraph
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/funcgql/cli/cmd/flag"
 	"github.com/funcgql/cli/config"
 	"github.com/funcgql/cli/go/module"
 	"github.com/funcgql/cli/gqlgen"
+	"github.com/funcgql/cli/repopath"
+	"github.com/funcgql/cli/shell"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 var updateCmd = &cobra.Command{
-	Use:   "update [name of subgraph module | subgraph module in current directory]",
+	Use:   "update [name of subgraph module | subgraph module in the current directory]",
 	Short: "Update the source code of a subgraph module",
 	Long: "Update the source code of the specified subgraph module or the subgraph module in the current working " +
 		"directory based on the schema file",
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) > 0 {
-			return updateModule(args[0])
+			return updateNamed(args[0])
 		} else {
 			return updateCurrentDir()
 		}
@@ -37,8 +38,11 @@ func init() {
 	})
 }
 
-func updateModule(moduleName string) error {
-	cfg, err := config.LoadFromRepoRoot()
+func updateNamed(moduleName string) error {
+	shellAPI := shell.NewAPI()
+	repoPathAPI := repopath.NewAPI(shellAPI)
+
+	cfg, err := config.LoadFromRepoRoot(repoPathAPI)
 	if err != nil {
 		return err
 	}
@@ -49,26 +53,35 @@ func updateModule(moduleName string) error {
 		return errors.Errorf("module %s does not exist", moduleName)
 	}
 
-	fmt.Println("🏗  Updating subgraph source code of", moduleName)
-	if err := gqlgen.NewAPI().Generate(targetModule.AbsPath()); err != nil {
-		return err
-	}
-
-	fmt.Println("✅ Successfully updated module", moduleName)
-	return nil
+	return updateModule(targetModule)
 }
 
 func updateCurrentDir() error {
-	workingDirPath, err := os.Getwd()
+	shellAPI := shell.NewAPI()
+
+	currentDirModule, exists, err := module.CurrentDir(shellAPI)
 	if err != nil {
-		return errors.Wrap(err, "failed to determine current working directory path")
+		return err
+	} else if !exists {
+		return errors.Wrap(err, "current directory does not contain a subgraph go module")
 	}
 
-	fmt.Println("🏗  Updating subgraph source code in current directory")
-	if err := gqlgen.NewAPI().Generate(workingDirPath); err != nil {
+	return updateModule(currentDirModule)
+}
+
+func updateModule(targetModule module.Module) error {
+	shellAPI := shell.NewAPI()
+
+	fmt.Println("🐭 Updating module", targetModule.Name(), "tools")
+	if err := targetModule.InstallAllTools(shellAPI); err != nil {
 		return err
 	}
 
-	fmt.Println("✅ Successfully updated subgraph module in", workingDirPath)
+	fmt.Println("🏗  Updating subgraph source code of", targetModule.Name())
+	if err := gqlgen.NewAPI(shellAPI).Generate(targetModule); err != nil {
+		return err
+	}
+
+	fmt.Println("✅ Successfully updated module", targetModule.Name())
 	return nil
 }

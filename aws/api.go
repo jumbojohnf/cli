@@ -2,6 +2,7 @@ package aws
 
 import (
 	"github.com/funcgql/cli/config"
+	"github.com/funcgql/cli/repopath"
 
 	"github.com/funcgql/cli/shell"
 	"github.com/pkg/errors"
@@ -9,15 +10,12 @@ import (
 
 type API interface {
 	CreateLambdaRole() error
-
-	execute(args ...string) (shell.Output, error)
+	HasCLI() (bool, error)
+	InstallCLI() error
 }
 
-func NewAPI() (API, error) {
-	cfg, err := config.LoadFromRepoRoot()
-	if err != nil {
-		return nil, err
-	} else if cfg.AWS == nil {
+func NewAPI(shellAPI shell.API, repoPathAPI repopath.API, cfg *config.Config) (API, error) {
+	if cfg.AWS == nil {
 		return nil, errors.New("missing AWS configuration")
 	}
 
@@ -25,14 +23,12 @@ func NewAPI() (API, error) {
 	return &api{
 		binaryPath: binaryPath,
 		cfg:        *cfg.AWS,
+		shellAPI:   shellAPI,
 	}, nil
 }
 
 type api struct {
 	binaryPath string
 	cfg        config.AWSConfig
-}
-
-func (a *api) execute(args ...string) (shell.Output, error) {
-	return shell.Execute(a.binaryPath, args...)
+	shellAPI   shell.API
 }

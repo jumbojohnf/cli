@@ -1,27 +1,27 @@
 package rover
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/funcgql/cli/cliio"
-	"github.com/funcgql/cli/shell"
 	"github.com/pkg/errors"
 )
 
-func InstallCLI() error {
-	if needsInstall, _ := needsInstall(); !needsInstall {
-		fmt.Println("✅  Rover CLI already installed")
-		return nil
+func (a *api) HasCLI() (bool, error) {
+	output, err := a.shellAPI.Execute(a.binaryPath, "--version")
+	if err != nil {
+		return false, err
 	}
+	return !strings.Contains(output.Combined, cliVersion), nil
+}
 
+func (a *api) InstallCLI() error {
 	installer, err := cliio.Download(cliInstallerURL)
 	if err != nil {
 		return errors.Wrap(err, "failed to download Rover CLI installer script")
 	}
 
-	fmt.Println("🌝 Installing Apollo Rover CLI")
-	if _, err := shell.Execute("/bin/sh", installer.Name()); err != nil {
+	if _, err := a.shellAPI.ExecuteWithIO("/bin/sh", installer.Name()); err != nil {
 		return err
 	}
 
@@ -32,16 +32,3 @@ const (
 	cliVersion      = "0.4.8"
 	cliInstallerURL = "https://rover.apollo.dev/nix/latest"
 )
-
-func needsInstall() (bool, error) {
-	api, err := NewAPI()
-	if err != nil {
-		return false, err
-	}
-
-	output, err := api.execute("--version")
-	if err != nil {
-		return true, err
-	}
-	return !strings.Contains(output.Combined, cliVersion), nil
-}

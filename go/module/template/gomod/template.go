@@ -1,4 +1,4 @@
-package template
+package gomod
 
 import (
 	_ "embed"
@@ -7,6 +7,8 @@ import (
 	"github.com/funcgql/cli/go/version"
 	"github.com/funcgql/cli/template"
 )
+
+const Filename = "go.mod"
 
 type GoModTemplate interface {
 	Export(rootDir string) error
@@ -24,8 +26,7 @@ func (t goModTemplate) Export(dirAbsPath string) error {
 		return err
 	}
 
-	const filename = "go.mod"
-	if _, err := template.Export(content, filepath.Join(dirAbsPath, filename)); err != nil {
+	if _, err := template.Export(content, filepath.Join(dirAbsPath, Filename)); err != nil {
 		return err
 	}
 	return nil
@@ -45,7 +46,7 @@ func (t goModTemplate) templateContentData() (interface{}, error) {
 	}
 	return templateData{
 		ModuleName: t.moduleName,
-		GoVersion:  version.Current(),
+		GoVersion:  version.Current().MajorMinor(),
 	}, nil
 }
 

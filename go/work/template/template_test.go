@@ -1,7 +1,6 @@
 package template
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -17,7 +16,6 @@ func Test_topLevelModuleDirNames(t *testing.T) {
 func Test_Export(t *testing.T) {
 	content, err := goWorkTemplate{}.render("fixtures")
 	require.NoError(t, err)
-	fmt.Println(content)
 	require.Contains(t, content, "go ")
 	require.Contains(t, content, `use (
   ./mod_1

@@ -19,17 +19,17 @@ type Config struct {
 	AWS                 *AWSConfig `yaml:"aws,omitempty"`
 }
 
-func LoadFromRepoRoot() (*Config, error) {
-	repoRoot, err := repopath.GitRepoPath()
+func LoadFromRepoRoot(repoPathAPI repopath.API) (*Config, error) {
+	repoRoot, err := repoPathAPI.RootPath()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to determine Git repository path")
 	}
 
-	result, hasConfig, err := LoadFrom(repoRoot.Path)
+	result, hasConfig, err := LoadFrom(repoRoot)
 	if err != nil {
 		return nil, err
 	} else if !hasConfig {
-		return nil, errors.Errorf("cannot locate %s config file in %s", ConfigFilename, repoRoot.Path)
+		return nil, errors.Errorf("cannot locate %s config file in %s", ConfigFilename, repoRoot)
 	}
 	return result, nil
 }

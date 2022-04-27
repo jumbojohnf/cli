@@ -23,7 +23,8 @@ func (a *api) CreateLambdaRole() error {
 		return errors.Wrap(err, "failed to export lambda role policy content")
 	}
 
-	if output, err := a.execute(
+	if output, err := a.shellAPI.Execute(
+		a.binaryPath,
 		"iam", "create-role",
 		"--role-name", a.cfg.Lambda.RoleName,
 		"--assume-role-policy-document", fmt.Sprintf("file://%s", policyFile.AbsPath()),
@@ -34,7 +35,8 @@ func (a *api) CreateLambdaRole() error {
 		}
 	}
 
-	if output, err := a.execute(
+	if output, err := a.shellAPI.Execute(
+		a.binaryPath,
 		"iam", "attach-role-policy",
 		"--role-name", a.cfg.Lambda.RoleName,
 		"--policy-arn", "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",

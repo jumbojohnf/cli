@@ -12,26 +12,26 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (a *api) Init(absPath string, targetModule module.Module, functionTypes []functype.FunctionType) error {
-	if err := a.runIn("init", absPath); err != nil {
+func (a *api) Init(targetModule module.Module, functionTypes []functype.FunctionType) error {
+	if err := a.run("init", targetModule); err != nil {
 		return err
 	}
 
-	if err := a.replaceMain(absPath, targetModule, functionTypes); err != nil {
+	if err := a.replaceMain(targetModule, functionTypes); err != nil {
 		return err
 	}
-	if err := a.replaceSchema(absPath, targetModule); err != nil {
+	if err := a.replaceSchema(targetModule); err != nil {
 		return err
 	}
-	if err := a.replaceResolvers(absPath); err != nil {
+	if err := a.replaceResolvers(targetModule); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (a *api) replaceMain(absPath string, targetModule module.Module, functionTypes []functype.FunctionType) error {
-	serverFile := cliio.FileOf(filepath.Join(absPath, "server.go"))
+func (a *api) replaceMain(targetModule module.Module, functionTypes []functype.FunctionType) error {
+	serverFile := cliio.FileOf(filepath.Join(targetModule.AbsPath(), "server.go"))
 	if err := serverFile.Remove(); err != nil {
 		return errors.Wrapf(err, "failed to remove %s", serverFile.AbsPath())
 	}
@@ -40,7 +40,7 @@ func (a *api) replaceMain(absPath string, targetModule module.Module, functionTy
 		switch functionType {
 		case functype.Lambda:
 			mainTemplate := lambdatemplate.New(targetModule.Name())
-			if err := mainTemplate.Export(absPath); err != nil {
+			if err := mainTemplate.Export(targetModule.AbsPath()); err != nil {
 				return errors.Wrap(err, "failed to generate lambda server main.go")
 			}
 		default:
@@ -50,37 +50,30 @@ func (a *api) replaceMain(absPath string, targetModule module.Module, functionTy
 
 	// Regardless of function type, always generate local main.go.
 	localMainTemplate := localtemplate.New(targetModule.Name())
-	if err := localMainTemplate.Export(absPath); err != nil {
+	if err := localMainTemplate.Export(targetModule.AbsPath()); err != nil {
 		return errors.Wrap(err, "failed to generate local server main.go")
 	}
 
 	return nil
 }
 
-func (a *api) replaceSchema(absPath string, targetModule module.Module) error {
-	const (
-		graphDirName   = "graph"
-		schemaFilename = "schema.graphqls"
-	)
-	schemaFile := cliio.FileOf(filepath.Join(absPath, graphDirName, schemaFilename))
+func (a *api) replaceSchema(targetModule module.Module) error {
+	schemaFile := cliio.FileOf(filepath.Join(targetModule.AbsPath(), schematemplate.DirName, schematemplate.Filename))
 	if err := schemaFile.Remove(); err != nil {
 		return errors.Wrapf(err, "failed to remove %s", schemaFile.AbsPath())
 	}
 
 	schemaTemplate := schematemplate.New(targetModule.DirName())
-	if err := schemaTemplate.Export(absPath); err != nil {
+	if err := schemaTemplate.Export(targetModule.AbsPath()); err != nil {
 		return errors.Wrap(err, "failed to generate schema file")
 	}
 
 	return nil
 }
 
-func (a *api) replaceResolvers(absPath string) error {
-	const (
-		graphDirName      = "graph"
-		resolversFilename = "schema.resolvers.go"
-	)
-	resolversFile := cliio.FileOf(filepath.Join(absPath, graphDirName, resolversFilename))
+func (a *api) replaceResolvers(targetModule module.Module) error {
+	const resolversFilename = "schema.resolvers.go"
+	resolversFile := cliio.FileOf(filepath.Join(targetModule.AbsPath(), schematemplate.DirName, resolversFilename))
 	if err := resolversFile.Remove(); err != nil {
 		return errors.Wrapf(err, "failed to remove %s", resolversFile.AbsPath())
 	}

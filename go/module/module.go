@@ -1,11 +1,18 @@
 package module
 
+import (
+	"github.com/funcgql/cli/shell"
+)
+
 type Module interface {
 	Name() string
 	DirName() string
 	AbsPath() string
-	Tidy() error
-	InstallTools() error
+	Tidy(shellAPI shell.API) error
+	ToolOf(importPath string) Tool
+	Tools() ([]Tool, error)
+	InstallInitialTools(shellAPI shell.API) error
+	InstallAllTools(shellAPI shell.API) error
 }
 
 func (m module) Name() string {
