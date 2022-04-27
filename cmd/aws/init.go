@@ -32,7 +32,7 @@ var initCmd = &cobra.Command{
 		dir := cliio.DirOf(cfg.GraphModulesAbsPath)
 
 		if graphModuleDirExists, err := dir.Exists(); err != nil {
-			return errors.Errorf("could not find config file %s in %s", config.ConfigFilename, dir)
+			return errors.Wrapf(err, "could not find config file %s in %s", config.ConfigFilename, dir)
 		} else if graphModuleDirExists {
 			fmt.Println("🌳 Setting up AWS development environment in", dir)
 		} else {
