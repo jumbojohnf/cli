@@ -29,15 +29,15 @@ var initCmd = &cobra.Command{
 			return errors.Errorf("missing AWS configuration %s", config.ConfigFilename)
 		}
 
-		dir := cliio.DirOf(cfg.GraphModulesAbsPath)
+		graphModulesDir := cliio.DirOf(cfg.GraphModulesAbsPath)
 
-		if graphModuleDirExists, err := dir.Exists(); err != nil {
-			return errors.Wrapf(err, "could not find config file %s in %s", config.ConfigFilename, dir)
-		} else if graphModuleDirExists {
-			fmt.Println("🌳 Setting up AWS development environment in", dir)
-		} else {
-			return errors.Errorf("config file does not exist in working directory🤬\nCurrent working directory: ", dir)
+		if graphModuleDirExists, err := graphModulesDir.Exists(); err != nil {
+			return errors.Wrapf(err, "could not find config file in: ", graphModulesDir.AbsPath())
+		} else if !graphModuleDirExists {
+			return errors.Errorf("config file does not exist in repo's directory🤬\nCurrent repo directory: ", graphModulesDir)
 		}
+
+		fmt.Println("🌳 Setting up AWS development environment in", graphModulesDir)
 
 		roverAPI, err := rover.NewAPI(shellAPI)
 		if err != nil {
